@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "RAG: Flask + Streamlit",
+      "name": "Банковский аудит: API + интерфейс",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": ["run"],
+      "args": ["bank"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "subProcess": true,

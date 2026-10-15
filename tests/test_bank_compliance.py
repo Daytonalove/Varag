@@ -40,6 +40,21 @@ class ComplianceTests(unittest.TestCase):
         results=local_checks()
         self.assertEqual([r['id'] for r in results if not r['passed']],[])
 
+    def test_bank_and_configure_share_key_path_with_environment_override(self):
+        from document_rag.bank.runtime import configured_provider
+        (self.root/'configured.key').write_text('test-only-credential')
+        (self.root/'override.key').write_text('override-test-credential')
+        (self.root/'config.json').write_text(json.dumps({'gateway':{
+            'scope':'GIGACHAT_API_PERS','model':'test','key_file':'configured.key'}}))
+        with patch('document_rag.bank.runtime.ROOT',self.root),patch.dict(os.environ,{},clear=True):
+            self.assertEqual(configured_provider().cfg['key_file'],str((self.root/'configured.key').resolve()))
+            with patch.dict(os.environ,{'GIGACHAT_KEY_FILE':str(self.root/'override.key')}):
+                self.assertEqual(configured_provider().cfg['key_file'],str((self.root/'override.key').resolve()))
+            (self.root/'configured.key').unlink()
+            self.assertIsNone(configured_provider())
+            with patch.dict(os.environ,{'GIGACHAT_CREDENTIALS':'env-test-credential'}):
+                self.assertEqual(configured_provider().credential(),'env-test-credential')
+
     def test_pdf_unicode_long_source_and_invalid_format(self):
         self.upload('4.2 Лимит кредитного комитета составляет 10 млн руб.\n'+'Сверьте с оригиналом документа. '*300)
         answer=AnswerService(self.store).ask(self.project,'owner','Лимит кредитного комитета?')

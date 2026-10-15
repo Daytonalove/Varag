@@ -7,6 +7,6 @@
     {"label": "RAG: диагностика", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "doctor"], "problemMatcher": []},
     {"label": "RAG: тест OCR и семантического поиска", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "selftest"], "problemMatcher": []},
     {"label": "RAG: загрузить примеры", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "demo"], "problemMatcher": []},
-    {"label": "RAG: запустить", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "run"], "problemMatcher": []}
+    {"label": "RAG: запустить", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "bank"], "problemMatcher": []}
   ]
 }

@@ -25,10 +25,11 @@ def configured_provider():
         legacy = json.loads(config.read_text()).get('gateway', {})
     scope = os.environ.get('GIGACHAT_SCOPE') or legacy.get('scope')
     model = os.environ.get('GIGACHAT_MODEL') or legacy.get('model')
-    key_file = os.environ.get('GIGACHAT_KEY_FILE') or str(ROOT / 'secrets/gigachat-bank.key')
+    key_file = os.environ.get('GIGACHAT_KEY_FILE') or legacy.get('key_file') or str(ROOT / 'secrets/gigachat-bank.key')
+    key_file = str((ROOT / Path(key_file).expanduser()).resolve())
     if scope not in ('GIGACHAT_API_PERS', 'GIGACHAT_API_B2B', 'GIGACHAT_API_CORP') or not model:
         return None
-    if not os.environ.get('GIGACHAT_AUTH_KEY') and not Path(key_file).is_file():
+    if not any(os.environ.get(k,'').strip() for k in ('GIGACHAT_AUTH_KEY','GIGACHAT_CREDENTIALS')) and not Path(key_file).is_file():
         return None
     ca = os.environ.get('GIGACHAT_CA_BUNDLE') or legacy.get('ca_file') or ''
     if ca and not Path(ca).is_absolute():
