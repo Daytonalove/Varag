@@ -1,0 +1,51 @@
+test_answer_exposes_verification_limits_and_revision (test_audit.AuditTests.test_answer_exposes_verification_limits_and_revision) ... ok
+test_conflict_returns_http_409 (test_audit.AuditTests.test_conflict_returns_http_409) ... ok
+test_deleted_chat_not_resurrected (test_audit.AuditTests.test_deleted_chat_not_resurrected) ... ok
+test_real_quote_does_not_prove_claim (test_audit.AuditTests.test_real_quote_does_not_prove_claim) ... ok
+test_replaced_document_during_generation_rejects_stale_answer (test_audit.AuditTests.test_replaced_document_during_generation_rejects_stale_answer) ... ok
+test_search_available_during_generation (test_audit.AuditTests.test_search_available_during_generation) ... ok
+test_upload_batch_continues_after_bad_file (test_audit.AuditTests.test_upload_batch_continues_after_bad_file) ... 2026-10-14 21:26:04.544 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_comparison_retry (test_core.AnswerTests.test_comparison_retry) ... ok
+test_fabricated_quote (test_core.AnswerTests.test_fabricated_quote) ... ok
+test_insufficient (test_core.AnswerTests.test_insufficient) ... ok
+test_invalid_json_rejected (test_core.AnswerTests.test_invalid_json_rejected) ... ok
+test_no_coverage_rejected (test_core.AnswerTests.test_no_coverage_rejected) ... ok
+test_unknown_source (test_core.AnswerTests.test_unknown_source) ... ok
+test_whitespace_normalization (test_core.AnswerTests.test_whitespace_normalization) ... ok
+test_api_auth_scope_upload_and_download (test_core.EngineTests.test_api_auth_scope_upload_and_download) ... ok
+test_backup_is_complete (test_core.EngineTests.test_backup_is_complete) ... ok
+test_delete_document_removes_related_chats (test_core.EngineTests.test_delete_document_removes_related_chats) ... ok
+test_docx_paragraph_and_table (test_core.EngineTests.test_docx_paragraph_and_table) ... ok
+test_failed_replace_preserves_original (test_core.EngineTests.test_failed_replace_preserves_original) ... ok
+test_history_scope_does_not_leak (test_core.EngineTests.test_history_scope_does_not_leak) ... ok
+test_history_used_in_same_scope (test_core.EngineTests.test_history_used_in_same_scope) ... ok
+test_hybrid_fusion (test_core.EngineTests.test_hybrid_fusion) ... ok
+test_invalid_scope (test_core.EngineTests.test_invalid_scope) ... ok
+test_persist_chat_and_quote_snapshots (test_core.EngineTests.test_persist_chat_and_quote_snapshots) ... ok
+test_persistence_original (test_core.EngineTests.test_persistence_original) ... ok
+test_replace_no_duplicates (test_core.EngineTests.test_replace_no_duplicates) ... ok
+test_replacement_invalidates_history_for_rewrite (test_core.EngineTests.test_replacement_invalidates_history_for_rewrite) ... ok
+test_search_scope (test_core.EngineTests.test_search_scope) ... ok
+test_signature_prevents_silent_mixed_index (test_core.EngineTests.test_signature_prevents_silent_mixed_index) ... ok
+test_401_refreshes_once (test_core.ProviderTests.test_401_refreshes_once) ... ok
+test_expired_oauth_rejected (test_core.ProviderTests.test_expired_oauth_rejected) ... ok
+test_generation_truncated_rejected (test_core.ProviderTests.test_generation_truncated_rejected) ... ok
+test_http_error_body_not_exposed (test_core.ProviderTests.test_http_error_body_not_exposed) ... ok
+test_insecure_url_rejected (test_core.ProviderTests.test_insecure_url_rejected) ... ok
+test_redirects_disabled (test_core.ProviderTests.test_redirects_disabled) ... ok
+test_token_cache_and_expiry_milliseconds (test_core.ProviderTests.test_token_cache_and_expiry_milliseconds) ... ok
+test_compare_fifty_rejected (test_retrieval.CoverageTests.test_compare_fifty_rejected) ... ok
+test_missing_sources_reported (test_retrieval.CoverageTests.test_missing_sources_reported) ... ok
+test_diversity (test_retrieval.ReferenceTests.test_diversity) ... ok
+test_heading_over_cross_reference (test_retrieval.ReferenceTests.test_heading_over_cross_reference) ... ok
+test_no_prefix_match (test_retrieval.ReferenceTests.test_no_prefix_match) ... ok
+test_ocr_code_aliases (test_retrieval.ReferenceTests.test_ocr_code_aliases) ... ok
+test_section_not_standard_number (test_retrieval.ReferenceTests.test_section_not_standard_number) ... ok
+test_search_chat_resume_scope_and_delete (test_ui.UIFlowTests.test_search_chat_resume_scope_and_delete) ... 2026-10-14 21:26:06.880 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 2.600s
+
+OK

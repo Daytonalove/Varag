@@ -1,0 +1,780 @@
+{
+  "synthetic_only": true,
+  "persistent_user_data_modified": false,
+  "local_checks": [
+    {
+      "id": "different_products",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "same_amount_incompatible_operators",
+      "expected": "nonempty",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_durations",
+      "expected": "nonempty",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_periods",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "json_schema_claim_type",
+      "expected": "reject assessment object inside claims",
+      "observed": "rejected",
+      "passed": true,
+      "requirements": [
+        "GC-07",
+        "GC-07a"
+      ]
+    },
+    {
+      "id": "operator_validator",
+      "expected": "deterministic rejection of changed operator",
+      "observed": "rejected",
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "unrelated_amendment_validator",
+      "expected": "needs_review or rejection",
+      "observed": "needs_review",
+      "passed": true,
+      "requirements": [
+        "FR-11",
+        "FR-21",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "historical_version_retrieval",
+      "expected": "prior version present for historical date",
+      "observed": {
+        "old_version_present": true
+      },
+      "passed": true,
+      "requirements": [
+        "FR-19",
+        "FR-21"
+      ]
+    },
+    {
+      "id": "metadata_date_validation",
+      "expected": "400 for invalid date",
+      "observed": 400,
+      "passed": true,
+      "requirements": [
+        "FR-09",
+        "FR-10"
+      ]
+    },
+    {
+      "id": "direct_pdf_export",
+      "expected": "application/pdf and PDF signature",
+      "observed": {
+        "status": 200,
+        "mime": "application/pdf"
+      },
+      "passed": true,
+      "requirements": [
+        "TZ-2.1"
+      ]
+    }
+  ],
+  "live_checks": [
+    {
+      "id": "amendment_after",
+      "expected": "explained_by_amendment",
+      "automated_pass": true,
+      "answer": "Прямое изменение указанного положения вступило в силу к дате проверки. Дата изменения: 2026-07-01. Для даты проверки: 15 млн руб..\n\nС 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. [1]\n\nПоложение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб. [2]\n\nПроверка норм по первоисточникам:\n\nПрямое изменение указанного положения вступило в силу к дате проверки. Дата изменения: 2026-07-01. Для даты проверки: 15 млн руб..\n\n«Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб.» [2]\n\n«Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб.» [3]\n\n«Решение правления. С 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит.» [1]\n",
+      "mode": "gigachat_answer",
+      "verification_status": "citations_checked",
+      "statuses": [
+        "explained_by_amendment"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "9955a92c94f320a7c4704a09cc4bee32",
+            "42a08dfbb80098aba121cf846da377f0",
+            "013c6500026ae15d647047772684f501"
+          ],
+          "status": "explained_by_amendment",
+          "explanation": "Прямое изменение указанного положения вступило в силу к дате проверки. Дата изменения: 2026-07-01. Для даты проверки: 15 млн руб..",
+          "evidence": [
+            {
+              "block_id": "9955a92c94f320a7c4704a09cc4bee32",
+              "quote": "Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб."
+            },
+            {
+              "block_id": "42a08dfbb80098aba121cf846da377f0",
+              "quote": "Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб."
+            },
+            {
+              "block_id": "013c6500026ae15d647047772684f501",
+              "quote": "Решение правления. С 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "money",
+              "value": "1.5E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            },
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            }
+          ],
+          "applicable_fact": {
+            "kind": "money",
+            "value": "1.5E+7",
+            "unit": "RUB",
+            "operator": "eq",
+            "exact": "15 млн руб.",
+            "as_of": "2026-08-01"
+          },
+          "method": "deterministic",
+          "amendment": "2026-07-01"
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор."
+      ],
+      "source_count": 3,
+      "model_version": "GigaChat-3-Pro:32.4.30.3",
+      "llm_diagnostics": [
+        {
+          "status": "succeeded",
+          "stage": "answer",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 956,
+              "completion_tokens": 396,
+              "total_tokens": 1352,
+              "precached_prompt_tokens": 0
+            },
+            "elapsed_ms": 13920,
+            "input_tokens": 1543,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "c6ccf7ddc6a18cd706ae3de18a8c2e034d59e8db69b6af04ac4a8eda2e35df79",
+            "stage": "answer",
+            "prompt_version": "a5bf478e95d6bd2c8ab3900dfe2501e5cca20850a34a843a33c7f9ce9c86e16b",
+            "source_block_ids": [
+              "013c6500026ae15d647047772684f501",
+              "9955a92c94f320a7c4704a09cc4bee32",
+              "42a08dfbb80098aba121cf846da377f0"
+            ],
+            "call_id": "ae0dbd38a12f4e0080c19039acf3a7af"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "b8734f28b12d4b9a9fbbc5e9d4493370",
+            "input_tokens": 1543
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "entailment",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 448,
+              "completion_tokens": 66,
+              "total_tokens": 514,
+              "precached_prompt_tokens": 0
+            },
+            "elapsed_ms": 1629,
+            "input_tokens": 770,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "63fa982fc85b7c00088a15338eb2c4220d58d23c72b17ec778aafb09addb6117",
+            "stage": "entailment",
+            "prompt_version": "289ab13d4d197df78fc4d6b39dba77e53212bfa641d208be2af9651c5b8753e4",
+            "source_block_ids": [
+              "013c6500026ae15d647047772684f501",
+              "9955a92c94f320a7c4704a09cc4bee32"
+            ],
+            "call_id": "e06845caec4b47a3ae643223066b3c07"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "7d0da0008a2f4e70be4f5c00618e3169",
+            "input_tokens": 770
+          }
+        }
+      ]
+    },
+    {
+      "id": "amendment_before",
+      "expected": "historical_10",
+      "automated_pass": null,
+      "answer": "Дата проверки предшествует изменению; новая норма ещё не вступила в силу. Дата изменения: 2026-07-01. Для даты проверки: 10 млн руб..\n\nАнализ GigaChat не завершён. Доступны найденные источники и предварительные локальные расхождения.\n\nПроверка норм по первоисточникам:\n\nДата проверки предшествует изменению; новая норма ещё не вступила в силу. Дата изменения: 2026-07-01. Для даты проверки: 10 млн руб..\n\n«Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб.» [2]\n\n«Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб.» [3]\n\n«Решение правления. С 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит.» [1]\n",
+      "mode": "gigachat_failed",
+      "verification_status": "needs_review",
+      "statuses": [
+        "explained_by_amendment"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "ac98f54b89a0c75accc7dd531e25d6f3",
+            "d7cd9f48f8451bce4b807dd4213d900a",
+            "949295d39dcb1be29428dfe1133ca753"
+          ],
+          "status": "explained_by_amendment",
+          "explanation": "Дата проверки предшествует изменению; новая норма ещё не вступила в силу. Дата изменения: 2026-07-01. Для даты проверки: 10 млн руб..",
+          "evidence": [
+            {
+              "block_id": "ac98f54b89a0c75accc7dd531e25d6f3",
+              "quote": "Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб."
+            },
+            {
+              "block_id": "d7cd9f48f8451bce4b807dd4213d900a",
+              "quote": "Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб."
+            },
+            {
+              "block_id": "949295d39dcb1be29428dfe1133ca753",
+              "quote": "Решение правления. С 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "money",
+              "value": "1.5E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            },
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            }
+          ],
+          "applicable_fact": {
+            "kind": "money",
+            "value": "1E+7",
+            "unit": "RUB",
+            "operator": "eq",
+            "exact": "10 млн руб.",
+            "as_of": "2026-03-01"
+          },
+          "method": "deterministic",
+          "amendment": "2026-07-01"
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор.",
+        "Ответ модели отклонён проверкой источников, чисел или схемы."
+      ],
+      "source_count": 3,
+      "model_version": "GigaChat-3-Pro",
+      "llm_diagnostics": [
+        {
+          "status": "rejected",
+          "stage": "answer",
+          "metadata": {
+            "call_id": "a27a6b0ee1af4fd9886df46342828a85",
+            "reason": "validation_failed",
+            "validator": "Числовое значение не подтверждено цитатами."
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "01b8f4bb15894429956a8d8387c26be7",
+            "input_tokens": 1538
+          }
+        },
+        {
+          "status": "rejected",
+          "stage": "answer",
+          "metadata": {
+            "call_id": "7fdcaef83724494891f0a45047e9092a",
+            "reason": "validation_failed",
+            "validator": "Цитата отсутствует в исходном блоке."
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "1abe6a5a5e91491898f5a2c56213fe78",
+            "input_tokens": 1615
+          }
+        }
+      ]
+    },
+    {
+      "id": "products",
+      "expected": "different_scope_no_conflict",
+      "automated_pass": true,
+      "answer": "Лимит кредитного комитета на ипотечную сделку составляет 10 млн руб. [1]\n\nЛимит кредитного комитета на потребительскую сделку составляет 15 млн руб. [2]",
+      "mode": "gigachat_answer",
+      "verification_status": "citations_checked",
+      "statuses": [
+        "different_scope_no_conflict"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "1ad42ef44d67d945f07d7785a815dd76",
+            "7c345e0f35700b66dccb91942e2c8a04"
+          ],
+          "status": "different_scope_no_conflict",
+          "explanation": "В источниках явно различаются продукт, вид лимита, валюта или непересекающиеся периоды действия.",
+          "evidence": [
+            {
+              "block_id": "1ad42ef44d67d945f07d7785a815dd76",
+              "quote": "Лимит кредитного комитета на ипотечную сделку составляет 10 млн руб."
+            },
+            {
+              "block_id": "7c345e0f35700b66dccb91942e2c8a04",
+              "quote": "Лимит кредитного комитета на потребительскую сделку составляет 15 млн руб."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            },
+            {
+              "kind": "money",
+              "value": "1.5E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            }
+          ],
+          "applicable_fact": null,
+          "method": "deterministic",
+          "amendment": null
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3",
+      "llm_diagnostics": [
+        {
+          "status": "succeeded",
+          "stage": "answer",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 405,
+              "completion_tokens": 390,
+              "total_tokens": 795,
+              "precached_prompt_tokens": 269
+            },
+            "elapsed_ms": 11597,
+            "input_tokens": 1261,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "c6ccf7ddc6a18cd706ae3de18a8c2e034d59e8db69b6af04ac4a8eda2e35df79",
+            "stage": "answer",
+            "prompt_version": "a5bf478e95d6bd2c8ab3900dfe2501e5cca20850a34a843a33c7f9ce9c86e16b",
+            "source_block_ids": [
+              "1ad42ef44d67d945f07d7785a815dd76",
+              "7c345e0f35700b66dccb91942e2c8a04"
+            ],
+            "call_id": "9de394a1ccd1467aa6f5e708cc0b55ab"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "751858426a744b71be384666eb79dd39",
+            "input_tokens": 1261
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "entailment",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 309,
+              "completion_tokens": 66,
+              "total_tokens": 375,
+              "precached_prompt_tokens": 0
+            },
+            "elapsed_ms": 2451,
+            "input_tokens": 631,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "63fa982fc85b7c00088a15338eb2c4220d58d23c72b17ec778aafb09addb6117",
+            "stage": "entailment",
+            "prompt_version": "289ab13d4d197df78fc4d6b39dba77e53212bfa641d208be2af9651c5b8753e4",
+            "source_block_ids": [
+              "1ad42ef44d67d945f07d7785a815dd76",
+              "7c345e0f35700b66dccb91942e2c8a04"
+            ],
+            "call_id": "a6e6891f20a344f596e1ac8a36f4b9be"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "2fe6825297aa4e9cae7c42223a101ddd",
+            "input_tokens": 631
+          }
+        }
+      ]
+    },
+    {
+      "id": "working_days",
+      "expected": "potential_unresolved_conflict",
+      "automated_pass": true,
+      "answer": "Потенциальное противоречие не разрешено.\n\nСрок рассмотрения заявки кредитным комитетом составляет 10 рабочих дней. [1]\n\nСрок рассмотрения заявки кредитным комитетом составляет 5 рабочих дней. [2]\n\nПроверка норм по первоисточникам:\n\nНайдены разные значения или несовместимые ограничения одного предмета. Основание выбора не установлено.\n\n«Срок рассмотрения заявки кредитным комитетом составляет 10 рабочих дней.» [1]\n\n«Срок рассмотрения заявки кредитным комитетом составляет 5 рабочих дней.» [2]\n",
+      "mode": "gigachat_answer",
+      "verification_status": "potential_unresolved_conflict",
+      "statuses": [
+        "potential_unresolved_conflict"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "e967cf17665067bd382c683320bc06c3",
+            "24cda51232c9d2d06020067cdbb0f0f4"
+          ],
+          "status": "potential_unresolved_conflict",
+          "explanation": "Найдены разные значения или несовместимые ограничения одного предмета. Основание выбора не установлено.",
+          "evidence": [
+            {
+              "block_id": "e967cf17665067bd382c683320bc06c3",
+              "quote": "Срок рассмотрения заявки кредитным комитетом составляет 10 рабочих дней."
+            },
+            {
+              "block_id": "24cda51232c9d2d06020067cdbb0f0f4",
+              "quote": "Срок рассмотрения заявки кредитным комитетом составляет 5 рабочих дней."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "duration",
+              "value": "1E+1",
+              "unit": "day:working",
+              "operator": "eq",
+              "exact": "10 рабочих дней"
+            },
+            {
+              "kind": "duration",
+              "value": "5",
+              "unit": "day:working",
+              "operator": "eq",
+              "exact": "5 рабочих дней"
+            }
+          ],
+          "applicable_fact": null,
+          "method": "deterministic",
+          "amendment": null
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3",
+      "llm_diagnostics": [
+        {
+          "status": "succeeded",
+          "stage": "answer",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 401,
+              "completion_tokens": 269,
+              "total_tokens": 670,
+              "precached_prompt_tokens": 269
+            },
+            "elapsed_ms": 4589,
+            "input_tokens": 1257,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "c6ccf7ddc6a18cd706ae3de18a8c2e034d59e8db69b6af04ac4a8eda2e35df79",
+            "stage": "answer",
+            "prompt_version": "a5bf478e95d6bd2c8ab3900dfe2501e5cca20850a34a843a33c7f9ce9c86e16b",
+            "source_block_ids": [
+              "e967cf17665067bd382c683320bc06c3",
+              "24cda51232c9d2d06020067cdbb0f0f4"
+            ],
+            "call_id": "006eeefd29a346488dc9ac924016bf74"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "b28c9dd76c314e2f9bc8741c660c362f",
+            "input_tokens": 1257
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "entailment",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 216,
+              "completion_tokens": 71,
+              "total_tokens": 287,
+              "precached_prompt_tokens": 77
+            },
+            "elapsed_ms": 2348,
+            "input_tokens": 615,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "63fa982fc85b7c00088a15338eb2c4220d58d23c72b17ec778aafb09addb6117",
+            "stage": "entailment",
+            "prompt_version": "289ab13d4d197df78fc4d6b39dba77e53212bfa641d208be2af9651c5b8753e4",
+            "source_block_ids": [
+              "e967cf17665067bd382c683320bc06c3",
+              "24cda51232c9d2d06020067cdbb0f0f4"
+            ],
+            "call_id": "57e344a0f3e246c2a42f612bcea3b0b9"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "d8ac44351b1d4579bfce633f60948af6",
+            "input_tokens": 615
+          }
+        }
+      ]
+    },
+    {
+      "id": "operators",
+      "expected": "potential_unresolved_conflict",
+      "automated_pass": true,
+      "answer": "Потенциальное противоречие не разрешено.\n\nЛимит кредитного комитета на сделку — не более 10 млн руб. [1]\n\nПроверка норм по первоисточникам:\n\nНайдены разные значения или несовместимые ограничения одного предмета. Основание выбора не установлено.\n\n«Лимит кредитного комитета на сделку — не более 10 млн руб.» [1]\n\n«Лимит кредитного комитета на сделку — свыше 10 млн руб.» [2]\n",
+      "mode": "gigachat_answer",
+      "verification_status": "potential_unresolved_conflict",
+      "statuses": [
+        "potential_unresolved_conflict",
+        "needs_review"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "ee838a1a8f06c82817dbbc3130511f7f",
+            "ae7c3ed14f5820c6be1c533199209d11"
+          ],
+          "status": "potential_unresolved_conflict",
+          "explanation": "Найдены разные значения или несовместимые ограничения одного предмета. Основание выбора не установлено.",
+          "evidence": [
+            {
+              "block_id": "ee838a1a8f06c82817dbbc3130511f7f",
+              "quote": "Лимит кредитного комитета на сделку — не более 10 млн руб."
+            },
+            {
+              "block_id": "ae7c3ed14f5820c6be1c533199209d11",
+              "quote": "Лимит кредитного комитета на сделку — свыше 10 млн руб."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "lte",
+              "exact": "10 млн руб."
+            },
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "gt",
+              "exact": "10 млн руб."
+            }
+          ],
+          "applicable_fact": null,
+          "method": "deterministic",
+          "amendment": null,
+          "semantic_assessment": "needs_review"
+        },
+        {
+          "source_block_ids": [
+            "ee838a1a8f06c82817dbbc3130511f7f",
+            "ae7c3ed14f5820c6be1c533199209d11"
+          ],
+          "status": "needs_review",
+          "explanation": "В источниках указаны противоречивые лимиты: один утверждает предел в 10 млн руб., другой — что лимит превышает 10 млн руб. Необходимо уточнить, какой из них действует сейчас и для каких условий применяется каждый лимит (например, тип сделки или клиент). Дата проверки не задана, поэтому нельзя утверждать актуальность какого-либо значения без дополнительной информации о периоде действия каждого лимита и исключениях из правил. Недостающие сведения включают период применения, субъект и исключения по каждому лимиту, а также источник официального утверждения действующего лимита на момент проверки. Также неясно, есть ли изменения с датой вступления в силу, которые могли бы объяснить расхождение между источниками; если такие изменения были, требуется их текст и дата вступления в силу для сравнения с текущими значениями. Без этих данных невозможно однозначно определить действующий лимит кредитного комитета на сумму сделки.",
+          "evidence": [
+            {
+              "block_id": "ee838a1a8f06c82817dbbc3130511f7f",
+              "quote": "Лимит кредитного комитета на сделку — не более 10 млн руб."
+            },
+            {
+              "block_id": "ae7c3ed14f5820c6be1c533199209d11",
+              "quote": "Лимит кредитного комитета на сделку — свыше 10 млн руб."
+            }
+          ],
+          "method": "llm_checked"
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор.",
+        "Период проверки не задан, нет сведений об изменениях с датами вступления в силу, отсутствует информация о субъекте, продукте, валюте, типе лимита (сделка/клиент), операторе и исключениях для каждого лимита.",
+        "Часть утверждений не прошла смысловую проверку и исключена."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3",
+      "llm_diagnostics": [
+        {
+          "status": "succeeded",
+          "stage": "answer",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 404,
+              "completion_tokens": 848,
+              "total_tokens": 1252,
+              "precached_prompt_tokens": 269
+            },
+            "elapsed_ms": 9709,
+            "input_tokens": 1260,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "c6ccf7ddc6a18cd706ae3de18a8c2e034d59e8db69b6af04ac4a8eda2e35df79",
+            "stage": "answer",
+            "prompt_version": "a5bf478e95d6bd2c8ab3900dfe2501e5cca20850a34a843a33c7f9ce9c86e16b",
+            "source_block_ids": [
+              "ee838a1a8f06c82817dbbc3130511f7f",
+              "ae7c3ed14f5820c6be1c533199209d11"
+            ],
+            "call_id": "6513794a2c5946a9ac978a8cc5d1e524"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "395a0c8091204cc5a9001649e590014d",
+            "input_tokens": 1260
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "entailment",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 524,
+              "completion_tokens": 111,
+              "total_tokens": 635,
+              "precached_prompt_tokens": 77
+            },
+            "elapsed_ms": 3063,
+            "input_tokens": 923,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "63fa982fc85b7c00088a15338eb2c4220d58d23c72b17ec778aafb09addb6117",
+            "stage": "entailment",
+            "prompt_version": "289ab13d4d197df78fc4d6b39dba77e53212bfa641d208be2af9651c5b8753e4",
+            "source_block_ids": [
+              "ee838a1a8f06c82817dbbc3130511f7f",
+              "ae7c3ed14f5820c6be1c533199209d11"
+            ],
+            "call_id": "892bf283486d4fd79c40230b6d57b60a"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "afd1e2dea4364460acda92d50922d9b1",
+            "input_tokens": 923
+          }
+        }
+      ]
+    }
+  ]
+}

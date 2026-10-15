@@ -1,0 +1,66 @@
+[
+  {
+    "file": "41-scan-01.pdf",
+    "variant": "clean",
+    "expected_days": "400",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "42-scan-02.pdf",
+    "variant": "tilted",
+    "expected_days": "401",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "43-scan-03.pdf",
+    "variant": "low_contrast",
+    "expected_days": "402",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "44-scan-04.pdf",
+    "variant": "blurred",
+    "expected_days": "403",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "45-scan-05.pdf",
+    "variant": "clean",
+    "expected_days": "404",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "46-scan-06.pdf",
+    "variant": "tilted",
+    "expected_days": "405",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "47-scan-07.pdf",
+    "variant": "low_contrast",
+    "expected_days": "406",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  },
+  {
+    "file": "48-scan-08.pdf",
+    "variant": "blurred",
+    "expected_days": "407",
+    "number_found": true,
+    "orion_found": true,
+    "text_length": 435
+  }
+]
