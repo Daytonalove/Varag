@@ -180,7 +180,12 @@ def validated_parts(raw,sources,as_of=None):
 
 class GigaChatRAG(GigaChatEvidence):
     def analyze(self, question, sources, *, as_of=None, history=None, before_call=lambda *args: None, record_call=lambda *args: None):
-        """At most 12 API calls, 180 s overall budget (plus current request timeout)."""
+        """Fast RAG by default; set RAG_ANSWER_MODE=audit for the original analysis."""
+        import os
+        if os.environ.get('RAG_ANSWER_MODE', 'fast').strip().lower() != 'audit':
+            from .fast_generation import analyze_fast
+            return analyze_fast(self, question, sources, as_of=as_of, history=history,
+                                before_call=before_call, record_call=record_call)
         calls, deadline, metadata = 0, time.monotonic() + 180, []
         consumed_tokens=0
         window = int(self.cfg.get('context_window_tokens', 32768))

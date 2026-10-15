@@ -103,6 +103,29 @@ class GigaChatEvidence(GigaChat):
                     raise ProviderError('Ответ отклонён: невалидная схема, источник или цитата.') from None
 
 
+
+# Fast-RAG v2: deterministic dialogue resolution for RETRIEVAL, no LLM request.
+_RECHECK = re.compile(r'проверь|перепроверь|ошиб|неверн|неправил|некоррект|неточн|не по существу|заново', re.I)
+_FOLLOWUP = re.compile(r'^\s*(?:а\b|и\b|тогда\b)|\b(?:этот|этого|него|них|этом|других|ещ[её]|уточни|подробнее|разъясни|поясни)\b', re.I)
+
+
+def _search_query_with_history(question, history):
+    """For 'check again' search the original topic, not the correction text."""
+    if not history:
+        return question[:2000]
+    previous = [str(h.get('question') or '').strip() for h in history]
+    previous = [q for q in previous if q]
+    if not previous:
+        return question[:2000]
+    topic = next((q for q in reversed(previous) if not _RECHECK.search(q)), previous[-1])
+    if _RECHECK.search(question):
+        # Concrete new topic in a correction is kept, but generic review
+        # phrasing ('по существу не совсем корректно, проверь заново') isn't.
+        return topic[:2000]
+    if _FOLLOWUP.search(question):
+        return (question + '\n' + topic)[:2000]
+    return question[:2000]
+
 class AnswerService:
     def __init__(self, store, provider=None, external_approved=False, retriever=None, *, automatic_external=False):
         self.store, self.provider = store, provider
@@ -152,14 +175,13 @@ class AnswerService:
                 except Exception:
                     continue
                 if previous.get('conversation_id') == conversation_id:
-                    history.append({'question': previous['question'], 'document_ids': previous['coverage_manifest']['accessible_document_ids']})
+                    history.append({'question': previous['question'], 'answer_text': previous.get('answer_text', ''), 'document_ids': previous['coverage_manifest']['accessible_document_ids']})
                 if len(history) == 3:
                     break
             history.reverse()
         if not isinstance(question, str) or not 1 <= len(question.strip()) <= 2000:
             raise ValueError('Вопрос: 1–2000 символов.')
-        followup = bool(re.search(r'^\s*(?:а\b|и\b|тогда\b)|\b(?:этот|этого|него|них|этом|других|ещ[её]|уточни|подробнее)\b', question, re.I))
-        search_question = (question + ('\n' + '\n'.join(h['question'] for h in reversed(history)) if followup else ''))[:2000]
+        search_question = _search_query_with_history(question, history)
         retrieval = self.retriever.search(project, user, search_question, as_of=as_of)
         sources, manifest = retrieval['sources'], retrieval['coverage_manifest']
         discrepancies = ContradictionService().assess(sources, as_of) if retrieval['normative'] else []
@@ -246,9 +268,18 @@ class AnswerService:
             except ProviderError as exc:
                 evidence, llm_failed, mode = [], True, 'gigachat_failed'
                 warnings.append(str(exc))
+        if semantic is not None and semantic.get('verification_level') == 'source_ids_only':
+            cited_ids = {item['block_id'] for claim in semantic['claims'] for item in claim['evidence']}
+            for finding in discrepancies:
+                if finding.get('method') == 'deterministic' and finding.get('status') in (
+                        'potential_unresolved_conflict', 'explained_by_amendment', 'needs_review'):
+                    cited_ids.update(finding.get('source_block_ids', []))
+            # This also repairs [n] reference numbering, calculated below.
+            sources = [item for item in sources if item['block_id'] in cited_ids]
         status = 'needs_review' if sources else 'insufficient_evidence'
         if semantic is not None:
-            status = 'citations_checked' if semantic['claims'] else 'insufficient_evidence'
+            status = ('needs_review' if semantic.get('verification_level') == 'source_ids_only'
+                      else 'citations_checked') if semantic['claims'] else 'insufficient_evidence'
             if any(s['quality_flags'] for s in sources):
                 status = 'needs_review'
         if any(d['status'] == 'potential_unresolved_conflict' for d in discrepancies):
@@ -271,7 +302,9 @@ class AnswerService:
             if status == 'potential_unresolved_conflict':
                 text = 'Потенциальное противоречие не разрешено.\n\n' + text
         elif use_llm and not evidence and not llm_failed:
-            text = 'Не удалось установить ответ по найденным источникам. Уточните вопрос или добавьте документы.'
+            reason = next((s for s in (semantic or {}).get('limitations', [])
+                           if s and not s.startswith('Быстрый режим:')), '')
+            text = 'Не удалось установить ответ по найденным источникам. ' + (reason or 'Уточните вопрос или добавьте документы.')
         # Always render both sides of unresolved server findings, even when the
         # model/verifier dropped a comparison or one claim. Never silently pick a norm.
         numbers = {s['block_id']: i + 1 for i,s in enumerate(sources)}
