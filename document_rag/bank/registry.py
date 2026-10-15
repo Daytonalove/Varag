@@ -78,6 +78,7 @@ def rebuild_derived(conn, version, *, claims=False):
     if number:
         proposal['document_number']=number[1]
     conn.execute('INSERT OR REPLACE INTO metadata_proposals VALUES(?,?,?)', (version,json.dumps(proposal,ensure_ascii=False),VERSION))
+    conn.execute('INSERT OR REPLACE INTO derived_versions VALUES(?,?,?)',(version,VERSION,int(claims)))
 
 
 def create_relation(store, user, payload):

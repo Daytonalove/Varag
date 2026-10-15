@@ -36,7 +36,7 @@ def configured_provider():
     return GigaChatRAG(dict(scope=scope, model=model, key_file=key_file, ca_file=ca,
         oauth_url=os.environ.get('GIGACHAT_OAUTH_URL') or 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
         base_url='https://api.giga.chat/v1', timeout_seconds=30, max_output_tokens=3000,
-        context_window_tokens=int(os.environ.get('GIGACHAT_CONTEXT_TOKENS','32768')), count_tokens=True,
+        context_window_tokens=int(os.environ.get('GIGACHAT_CONTEXT_TOKENS','32768')), count_tokens=True,reference_citations=True,
         question_token_budget=int(os.environ.get('GIGACHAT_QUESTION_TOKEN_BUDGET','120000')),
         requests_per_minute=int(os.environ.get('GIGACHAT_REQUESTS_PER_MINUTE','30')),
         allowed_model_versions=[v.strip() for v in os.environ.get('GIGACHAT_ALLOWED_MODEL_VERSIONS','').split(',') if v.strip()]))

@@ -131,13 +131,17 @@ def live_checks(selected_cases=None, diagnose=False):
             answer = service.ask(project, 'tester', case['question'], True, as_of=case['as_of'])
             statuses = [d['status'] for d in answer['discrepancies']]
             if case['expected'] == 'historical_10':
-                # Human review required for historical semantics; retain exact synthetic answer.
-                passed = None
+                # Check the server's source-bound dated conclusion; full prose
+                # correctness still requires independent semantic acceptance.
+                passed = answer['mode']=='gigachat_answer' and any(
+                    d['status']=='explained_by_amendment' and d.get('applicable_fact',{}).get('value')=='1E+7'
+                    for d in answer['discrepancies']) and 'potential_unresolved_conflict' not in statuses
             else:
                 passed = answer['mode'] == 'gigachat_answer' and case['expected'] in statuses
                 if case['expected'] in ('explained_by_amendment', 'different_scope_no_conflict'):
                     passed = passed and 'potential_unresolved_conflict' not in statuses
             row = dict(id=case['id'], expected=case['expected'], automated_pass=passed,
+                       manual_semantic_review_required=True,
                        answer=answer['answer_text'], mode=answer['mode'], verification_status=answer['verification_status'],
                        statuses=statuses, discrepancies=answer['discrepancies'], warnings=answer['warnings'],
                        source_count=len(answer['sources']), model_version=answer['model_version'])

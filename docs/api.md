@@ -85,3 +85,32 @@ windows, elapsed_ms и ограничения. Значение applied не о�
 
 `GET /api/v1/health`: reranker.enabled и reranker.model_id отражают загрузку;
 фактическое выполнение конкретного запроса определяется его манифестом.
+
+## Реестр, администрирование и эксплуатация
+
+- SearchRequest принимает `as_of: YYYY-MM-DD|null` и `filters` по полям реестра
+  (например `{"product":"МСБ","tags":["проверен"]}`). При as_of просматриваются
+  исторические версии; дата сама по себе не устанавливает правовой приоритет.
+- `GET /documents/{id}/registry`: метаданные, отдельное автоматическое предложение,
+  блоки для выбора основания. `PATCH /documents/{id}/metadata` валидирует типы,
+  даты, tags, verification_status и ведёт журнал до/после.
+- `POST /relations`: source_document_id, target_document_id, kind,
+  source_block_id, effective_from, confirmed. Обе стороны доступны на запись и
+  принадлежат одному проекту. Виды: amends/repeals/replaces/supplements/references/exception.
+  `GET /projects/{id}/relations`; `DELETE /relations/{id}` отзывает связь с аудитом.
+- `GET /projects/{id}/members`, `PUT /projects/{id}/members/{user}` с `role`
+  owner/auditor/viewer/null. Только владелец; последнего владельца удалить нельзя.
+- `PUT /documents/{id}/acl`: restricted:boolean, user_ids:list[str]. Только
+  владелец, список должен состоять из участников проекта.
+- `GET /projects/{id}/metrics`: доступен владельцу, считает только доступные ему
+  источники; usage, ошибки, latency, оценка стоимости при заданном тарифе.
+- `POST /projects/{id}/retention`: days:1–36500, execute:false по умолчанию.
+  execute:true очищает только ранее исключённые документы старше срока, индексы
+  и связанные ответы. Append-only аудит остаётся. Это не secure erase диска.
+- `GET /documents/{id}/pages/{number}/image?version=...&block=...`: PNG физической
+  страницы/кадра; необязательный block включает подсветку его layout-областей.
+- `GET /answers/{id}/export?format=json|html|pdf`. Другие форматы: 400.
+  Заключение аудитора дополнительно поддерживает verdict=needs_documents.
+
+Все эти пути входят в `/api/v1`, требуют локального токена и повторной проверки
+прав. SSO в этом этапе отложен пользователем.

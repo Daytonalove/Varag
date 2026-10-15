@@ -75,6 +75,18 @@ class ComplianceTests(unittest.TestCase):
             self.assertGreater(conn.execute('SELECT count(*) FROM block_fts').fetchone()[0],0)
             self.assertGreater(conn.execute('SELECT count(*) FROM claims').fetchone()[0],0)
 
+    def test_enabling_claims_rebuilds_existing_canonical_without_reparse(self):
+        self.upload('4.2 Лимит составляет 10 млн руб.')
+        with self.store.connect() as conn:
+            ids=[r[0] for r in conn.execute('SELECT id FROM blocks')]
+            version=conn.execute('SELECT index_version FROM projects').fetchone()[0]
+        with patch.dict(os.environ,{'ENABLE_CLAIMS_INDEX':'true'}):
+            reopened=Store(self.store.database)
+            with reopened.connect() as conn:
+                self.assertEqual([r[0] for r in conn.execute('SELECT id FROM blocks')],ids)
+                self.assertEqual(conn.execute('SELECT count(*) FROM claims').fetchone()[0],1)
+                self.assertGreater(conn.execute('SELECT index_version FROM projects').fetchone()[0],version)
+
     def test_relations_resolve_explicit_target_and_cannot_cross_project(self):
         target=self.upload('4.2 Специальная норма действует для филиала.','policy.txt')
         origin=self.upload('С 01.07.2026 изменяется пункт 4.2 положения.','change.txt')
@@ -155,6 +167,45 @@ class ComplianceTests(unittest.TestCase):
         from document_rag.bank.generation import numeric_facts
         self.assertEqual(numeric_facts('На 1 марта 2026 года'),numeric_facts('На 2026-03-01'))
 
+    def test_partial_validation_never_keeps_invalid_statement(self):
+        from document_rag.bank.generation import validated_parts
+        source=dict(block_id='b',section_path='1',text_exact='Срок составляет 5 рабочих дней.')
+        evidence=[{'block_id':'b','quote':source['text_exact']}]
+        data={'claims':[{'text':source['text_exact'],'evidence':evidence},
+                        {'text':'Срок составляет 100 рабочих дней.','evidence':evidence}],
+              'assessments':[{'status':'needs_review','explanation':'','evidence':evidence}],'limitations':[]}
+        result=validated_parts(json.dumps(data),[source])
+        self.assertEqual(len(result['claims']),1)
+        self.assertEqual(result['assessments'],[])
+        self.assertTrue(result['limitations'])
+
+    def test_source_filename_digits_are_not_normative_values(self):
+        from document_rag.bank.generation import validate_analysis
+        source=dict(block_id='abc789def',document_name='2.txt',section_path='4.2',
+                    text_exact='Лимит составляет 10 млн руб.')
+        claim={'text':'В документе 2.txt указано: лимит составляет 10 млн руб.',
+               'evidence':[{'block_id':source['block_id'],'quote':source['text_exact']}]}
+        data={'claims':[claim],'assessments':[],'limitations':[]}
+        self.assertEqual(len(validate_analysis(json.dumps(data),[source])['claims']),1)
+        for text in ('В документе 999.txt лимит составляет 10 млн руб.',
+                     'В документе 2.txt лимит составляет 2 млн руб.',
+                     'В документе 2.txt предусмотрено 2 исключения.'):
+            claim['text']=text
+            with self.assertRaises(ValueError):validate_analysis(json.dumps(data),[source])
+
+    def test_reference_citations_are_materialized_only_from_canonical_sources(self):
+        from document_rag.bank.generation import GigaChatRAG,expand_references
+        source=dict(block_id='canonical',document_name='Норма',page_number='1',section_path='1',text_exact='Срок составляет 5 рабочих дней.')
+        data={'claims':[{'text':source['text_exact'],'evidence':[{'quote_id':'Q1'}]}],'assessments':[],'limitations':[]}
+        provider=GigaChatRAG({'model':'test','reference_citations':True})
+        response=lambda data:{'model':'test','choices':[{'finish_reason':'stop','message':{'content':json.dumps(data)}}]}
+        with patch.object(provider,'call',side_effect=[response(data),response({'judgments':[{'index':0,'supported':True}]})]) as call:
+            result=provider.analyze('Срок?',[source])
+        self.assertEqual(result['claims'][0]['evidence'],[{'block_id':'canonical','quote':source['text_exact']}])
+        self.assertEqual(call.call_args_list[0].args[1]['response_format']['schema']['properties']['claims']['items']['properties']['evidence']['items']['required'],['quote_id'])
+        data['claims'][0]['evidence'][0]['quote_id']='invented'
+        with self.assertRaises(ValueError):expand_references(json.dumps(data),{'Q1':source})
+
     def test_unapproved_model_and_token_quota_block_publication(self):
         from document_rag.bank.generation import GigaChatRAG
         source=dict(block_id='b',document_name='norm',page_number='1',section_path='1',text_exact='Срок составляет 5 рабочих дней.')
@@ -169,6 +220,32 @@ class ComplianceTests(unittest.TestCase):
             result=provider.analyze('Какой срок?',[source])
         self.assertFalse(result['claims'])
         self.assertTrue(any('Версия модели изменилась' in e for e in result['errors']))
+
+    def test_cross_group_comparison_preserves_original_provenance(self):
+        from document_rag.bank.generation import GigaChatRAG
+        sources=[dict(block_id=str(i),document_name='norm',page_number='1',section_path='1',
+                    text_exact=f'Срок составляет {i+5} рабочих дней. '+'Описание условий. '*140) for i in range(2)]
+        provider=GigaChatRAG({'model':'test','context_window_tokens':9000,'count_tokens':True})
+        stages=[]
+        def reply(path,body):
+            if path=='/tokens/count':return [{'tokens':100} for _ in body['input']]
+            payload=json.loads(body['messages'][1]['content'])
+            if 'items' in payload:
+                data={'judgments':[{'index':i,'supported':True} for i in range(len(payload['items']))]}
+            elif 'task' in payload:
+                stages.append('cross')
+                data={'claims':[],'assessments':[{'status':'potential_unresolved_conflict','explanation':'Сроки различаются.',
+                      'evidence':[{'block_id':s['block_id'],'quote':s['text_exact'].split('Описание')[0]} for s in payload['sources']]}],'limitations':[]}
+            else:
+                data={'claims':[{'text':s['text_exact'].split('Описание')[0],
+                      'evidence':[{'block_id':s['block_id'],'quote':s['text_exact'].split('Описание')[0]}]} for s in payload['sources']],
+                      'assessments':[],'limitations':[]}
+            return {'model':'test','choices':[{'finish_reason':'stop','message':{'content':json.dumps(data)}}]}
+        with patch.object(provider,'call',side_effect=reply):
+            result=provider.analyze('Какой срок? ',sources)
+        self.assertTrue(stages)
+        self.assertEqual({e['block_id'] for d in result['assessments'] for e in d['evidence']},{'0','1'})
+        self.assertFalse(result['errors'])
 
     def test_retention_is_dry_by_default_and_removes_derived_copies(self):
         from document_rag.bank.operations import retention

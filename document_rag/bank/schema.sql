@@ -94,3 +94,5 @@ CREATE INDEX IF NOT EXISTS exact_lookup ON exact_terms(kind,value,unit,version_i
 CREATE TABLE IF NOT EXISTS claims(id INTEGER PRIMARY KEY, version_id TEXT,block_id TEXT,extractor_version TEXT,data TEXT);
 CREATE TABLE IF NOT EXISTS block_links(version_id TEXT,block_id TEXT,target_id TEXT,kind TEXT,PRIMARY KEY(version_id,block_id,target_id,kind));
 CREATE TABLE IF NOT EXISTS processing_progress(version_id TEXT PRIMARY KEY,completed INTEGER,total INTEGER);
+INSERT OR IGNORE INTO schema_versions VALUES(5);
+CREATE TABLE IF NOT EXISTS derived_versions(version_id TEXT PRIMARY KEY,normalizer_version TEXT,claims_enabled INTEGER);

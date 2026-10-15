@@ -36,8 +36,17 @@ class Store:
         self.database.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as conn:
             conn.executescript(Path(__file__).with_name('schema.sql').read_text())
-            for row in conn.execute('SELECT DISTINCT b.version_id FROM blocks b LEFT JOIN metadata_proposals p ON p.version_id=b.version_id WHERE p.version_id IS NULL').fetchall():
+            from .norms import VERSION
+            changed=set()
+            for row in conn.execute('''SELECT DISTINCT b.version_id,d.project_id FROM blocks b
+                JOIN versions v ON v.id=b.version_id JOIN documents d ON d.id=v.document_id
+                LEFT JOIN derived_versions p ON p.version_id=b.version_id
+                WHERE p.version_id IS NULL OR p.normalizer_version!=? OR p.claims_enabled!=?''',(VERSION,int(self.claims_enabled))).fetchall():
                 rebuild_derived(conn,row[0],claims=self.claims_enabled)
+                changed.add(row[1])
+            for project in changed:
+                conn.execute('UPDATE projects SET index_version=index_version+1 WHERE id=?',(project,))
+                self.event(conn,project,'system','index.migrated',project,{'normalizer':VERSION,'claims_enabled':self.claims_enabled})
 
     @contextmanager
     def connect(self):

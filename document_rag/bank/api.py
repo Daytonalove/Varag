@@ -60,6 +60,15 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
         raise RuntimeError('Этот контур пока поддерживает только LOCAL_DEMO_MODE=true и APP_ENV=development. Production требует SSO и отдельного развёртывания.')
     store = store or Store(os.environ.get('BANK_DATABASE', str(ROOT / 'data/bank/audit.sqlite3')))
     tokens = tokens or {local_token(store.database.parent): 'local-auditor'}
+    if path:=os.environ.get('BANK_LOCAL_USERS_FILE'):
+        import json
+        file=Path(path)
+        if file.stat().st_mode & 0o077:
+            raise RuntimeError('Файл локальных токенов должен иметь права 0600.')
+        configured=json.loads(file.read_text())
+        if not isinstance(configured,dict) or any(not isinstance(k,str) or len(k)<24 or not isinstance(v,str) or not 1<=len(v)<=160 for k,v in configured.items()):
+            raise RuntimeError('Файл пользователей: объект {длинный_случайный_токен: user_id}.')
+        tokens=dict(tokens,**configured)
     service = service or AnswerService(store)
     questions = QuestionQueue(store, service)
     app = Flask(__name__)
