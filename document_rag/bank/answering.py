@@ -50,16 +50,16 @@ class GigaChatEvidence(GigaChat):
         self.failures, self.open_until = 0, 0
         self.call_lock = threading.Lock()
         self.rate_lock = threading.Lock()
-        self.next_call = 0
+        self.rate_state = {'next_call': 0}
 
     def call(self,path,body=None):
         rate=float(self.cfg.get('requests_per_minute',0))
         if rate>0:
             with self.rate_lock:
-                delay=self.next_call-time.monotonic()
+                delay=self.rate_state['next_call']-time.monotonic()
                 if delay>0:
                     time.sleep(min(delay,60))
-                self.next_call=time.monotonic()+60/rate
+                self.rate_state['next_call']=time.monotonic()+60/rate
         return super().call(path,body)
 
     def credential(self):
@@ -104,11 +104,40 @@ class GigaChatEvidence(GigaChat):
 
 
 class AnswerService:
-    def __init__(self, store, provider=None, external_approved=False, retriever=None):
-        self.store, self.provider, self.external_approved = store, provider, external_approved
+    def __init__(self, store, provider=None, external_approved=False, retriever=None, *, automatic_external=False):
+        self.store, self.provider = store, provider
+        self.automatic_external = automatic_external
+        self.external_approved = external_approved or automatic_external
         self.retriever = retriever or Retriever(store, context_characters=56000 if hasattr(provider, 'analyze') else 16000)
+        self.model_lock = threading.Lock()
+        self.model_cache = (0, [])
 
-    def ask(self, project, user, question, use_llm=False, *, conversation_id=None, as_of=None, answer_id=None):
+    def available_models(self):
+        if not self.provider:
+            raise ValueError('GigaChat не настроен.')
+        with self.model_lock:
+            if self.model_cache[0] < time.monotonic():
+                models = [m for m in self.provider.models() if isinstance(m,str) and 'gigachat' in m.lower()]
+                self.model_cache = (time.monotonic()+60, models)
+            return list(self.model_cache[1])
+
+    def validate_model(self, model_id):
+        if model_id is None:
+            return
+        if not isinstance(model_id,str) or not 1 <= len(model_id) <= 150:
+            raise ValueError('Некорректная модель GigaChat.')
+        if not self.provider or (model_id != self.provider.cfg['model'] and model_id not in self.available_models()):
+            raise ValueError('Модель недоступна этому аккаунту GigaChat.')
+
+    def ask(self, project, user, question, use_llm=False, *, conversation_id=None, as_of=None, answer_id=None, model_id=None):
+        # Each request owns its model configuration; shared locks/rate state keep
+        # concurrent requests from mutating the default model or bypassing limits.
+        import copy
+        provider = self.provider
+        if model_id is not None:
+            self.validate_model(model_id)
+            provider = copy.copy(self.provider)
+            provider.cfg = dict(self.provider.cfg, model=model_id)
         answer_id = answer_id or uid()
         history = []
         if conversation_id:
@@ -134,7 +163,7 @@ class AnswerService:
         retrieval = self.retriever.search(project, user, search_question, as_of=as_of)
         sources, manifest = retrieval['sources'], retrieval['coverage_manifest']
         discrepancies = ContradictionService().assess(sources, as_of) if retrieval['normative'] else []
-        warnings = ['Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.',
+        warnings = ['Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки по оригиналу.',
                     'Отсутствие найденного расхождения не доказывает отсутствие противоречий.']
         if not self.store.claims_enabled:
             warnings.append('Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.')
@@ -145,7 +174,7 @@ class AnswerService:
         if any(reason.startswith('semantic_') for reason in manifest['limitations']):
             warnings.append('Семантический поиск выключен, ограничен или недоступен для части корпуса; см. манифест охвата.')
         if retrieval['normative']:
-            warnings.append('Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор.')
+            warnings.append('Применимость норм проверяется по явно указанным датам и основаниям; вывод зависит от полноты найденных источников.')
         if manifest['unexamined_candidate_count']:
             warnings.append('Часть кандидатов не рассмотрена из-за бюджета контекста.')
         if any(s['quality_flags'] for s in sources):
@@ -165,24 +194,24 @@ class AnswerService:
                 ids.update(doc for h in (context_history or []) for doc in h['document_ids'])
                 for document in ids:
                     doc = self.store.document_access(conn, document, user)
-                    if not doc['external_allowed']:
+                    if not self.automatic_external and not doc['external_allowed']:
                         raise ValueError('Анализ через GigaChat запрещён политикой документа или контекста диалога.')
         def record_call(state, stage, selected, data):
             call_id = data.get('call_id') or uid()
             with self.store.connect() as conn:
                 if state == 'started':
                     conn.execute('INSERT INTO llm_calls(id,project_id,user_id,question_id,stage,source_block_ids,model,status,metadata) VALUES(?,?,?,?,?,?,?,?,?)',
-                        (call_id, project, user, answer_id, stage, encoded([s['block_id'] for s in selected]), self.provider.cfg['model'], state, encoded(data)))
+                        (call_id, project, user, answer_id, stage, encoded([s['block_id'] for s in selected]), provider.cfg['model'], state, encoded(data)))
                 else:
                     conn.execute('UPDATE llm_calls SET status=?,metadata=? WHERE id=?', (state, encoded(data), call_id))
             return call_id
         if use_llm:
-            if not self.external_approved or not self.provider:
+            if not self.external_approved or not provider:
                 raise ValueError('Внешний анализ отключён: нужны EXTERNAL_LLM_APPROVED=true и настройки GigaChat.')
             check_policy(sources, history)
             try:
-                if sources and hasattr(self.provider, 'analyze'):
-                    semantic = self.provider.analyze(question, sources, as_of=as_of, history=history,
+                if sources and hasattr(provider, 'analyze'):
+                    semantic = provider.analyze(question, sources, as_of=as_of, history=history,
                                                      before_call=check_policy, record_call=record_call)
                     model = semantic['model']
                     metadata = {'model': model, 'calls': semantic['calls'], 'source_block_ids': semantic['examined_block_ids']}
@@ -209,7 +238,7 @@ class AnswerService:
                                                   explanation=assessment['explanation'], evidence=assessment['evidence'], method='llm_checked'))
                     llm_failed = not semantic['claims'] and bool(semantic['errors'])
                 elif sources:
-                    evidence, metadata = self.provider.select(question, sources)
+                    evidence, metadata = provider.select(question, sources)
                     model = metadata['model']
                 else:
                     evidence = []
@@ -229,7 +258,7 @@ class AnswerService:
         if llm_failed:
             status = 'needs_review'
         text = ('Не удалось установить по загруженным документам.' if not evidence else
-                'Найдены фрагменты для проверки. Дословные цитаты приведены ниже; применимость требует оценки аудитора.')
+                'Найдены фрагменты для проверки. Дословные цитаты приведены ниже; применимость требует проверки контекста.')
         if status == 'potential_unresolved_conflict':
             text = 'Потенциальное противоречие не разрешено. Найдены разные значения; основание выбора одного из них не установлено.'
         if llm_failed:

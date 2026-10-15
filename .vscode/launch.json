@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Банковский аудит: API + интерфейс",
+      "name": "Варяг: API + интерфейс",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",

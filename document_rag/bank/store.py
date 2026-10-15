@@ -36,6 +36,10 @@ class Store:
         self.database.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as conn:
             conn.executescript(Path(__file__).with_name('schema.sql').read_text())
+            conn.execute('BEGIN IMMEDIATE')
+            if 'model_id' not in {row['name'] for row in conn.execute('PRAGMA table_info(question_jobs)')}:
+                conn.execute('ALTER TABLE question_jobs ADD COLUMN model_id TEXT')
+            conn.execute('INSERT OR IGNORE INTO schema_versions VALUES(6)')
             from .norms import VERSION
             changed=set()
             for row in conn.execute('''SELECT DISTINCT b.version_id,d.project_id FROM blocks b

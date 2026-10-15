@@ -119,6 +119,7 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
                        external_llm_approved=service.external_approved, production_ready=False,
                        gigachat_configured=service.provider is not None,
                        model=getattr(service.provider, 'cfg', {}).get('model'),
+                       automatic_external=service.automatic_external,
                        retrieval_mode='hybrid' if store.encoder else 'lexical',
                        reranker={'enabled': service.retriever.reranker is not None,
                                  'model_id': getattr(service.retriever.reranker, 'model_id', None)},
@@ -134,6 +135,8 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
         if set(payload) != {'external_llm_approved'} or type(payload['external_llm_approved']) is not bool:
             raise ValueError('Ожидается boolean external_llm_approved.')
         approved = payload['external_llm_approved']
+        if service.automatic_external and not approved:
+            raise ValueError('В режиме Варяг ответы через GigaChat включены постоянно.')
         if approved and not service.provider:
             raise ValueError('Сначала настройте серверный ключ, scope и модель GigaChat.')
         service.external_approved = approved
@@ -155,6 +158,38 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
             return jsonify(error=str(exc)), 502
         model = service.provider.cfg['model']
         return jsonify(model=model, available=model in available, tls_verified=True)
+
+    @app.get('/api/v1/provider/models')
+    def provider_models():
+        from document_rag.provider import ProviderError
+        try:
+            return jsonify(models=service.available_models(), default=service.provider.cfg['model'])
+        except ProviderError as exc:
+            return jsonify(error=str(exc)), 502
+
+    @app.get('/api/v1/chats')
+    def chats():
+        result=[]
+        for project in store.projects(g.user):
+            with store.connect() as conn:
+                rows=conn.execute('''SELECT c.*, (SELECT model_id FROM question_jobs j
+                    WHERE j.conversation_id=c.id ORDER BY j.rowid DESC LIMIT 1) AS model_id
+                    FROM conversations c WHERE c.project_id=? AND c.user_id=? ORDER BY c.rowid DESC''',
+                    (project['id'],g.user)).fetchall()
+                for row in rows:
+                    result.append(dict(project_id=project['id'],conversation_id=row['id'],
+                                       title=row['title'],model_id=row['model_id'],created=row['created']))
+                if not rows:
+                    legacy=conn.execute('SELECT 1 FROM answers WHERE project_id=? AND user_id=? LIMIT 1',
+                                        (project['id'],g.user)).fetchone()
+                    result.append(dict(project_id=project['id'],conversation_id='legacy' if legacy else None,
+                                       title=project['name'],model_id=None,created=project['created']))
+        return jsonify(sorted(result,key=lambda row:row['created'],reverse=True))
+
+    @app.post('/api/v1/chats')
+    def new_chat():
+        project=store.create_project('Новый чат',g.user)
+        return jsonify(project_id=project['id'],conversation_id=None,title='Новый чат'),201
 
     @app.get('/api/v1/projects')
     def projects():
@@ -216,10 +251,10 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
             raise ValueError('Выберите от 1 до 100 файлов (до 100 MiB на пакет).')
         # A batch can partially succeed: each item gets its own result, never hide accepted uploads.
         results = []
-        external = request.form.get('external_allowed', 'false')
+        external = 'true' if service.automatic_external else request.form.get('external_allowed', 'false')
         if external not in ('true', 'false'):
             raise ValueError('external_allowed должен быть true или false.')
-        if external == 'true':
+        if external == 'true' and not service.automatic_external:
             with store.connect() as conn:
                 if store.project_access(conn, project, g.user) != 'owner':
                     raise NotFound()
@@ -374,14 +409,15 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
     @app.post('/api/v1/projects/<project>/questions')
     def ask(project):
         payload = body()
-        use_llm = payload.get('use_llm', False)
+        use_llm = True if service.automatic_external else payload.get('use_llm', False)
         if type(use_llm) is not bool:
             raise ValueError('use_llm должен быть boolean.')
         if payload.get('async', True) is not False:
             return jsonify(questions.submit(project, g.user, payload.get('question'), use_llm,
                 conversation_id=payload.get('conversation_id'), as_of=payload.get('as_of'),
-                idempotency_key=request.headers.get('Idempotency-Key'))), 202
-        return jsonify(service.ask(project, g.user, payload.get('question'), use_llm, as_of=payload.get('as_of'))), 201
+                idempotency_key=request.headers.get('Idempotency-Key'),model_id=payload.get('model_id'))), 202
+        return jsonify(service.ask(project, g.user, payload.get('question'), use_llm, as_of=payload.get('as_of'),
+                                   model_id=payload.get('model_id'))), 201
 
     @app.get('/api/v1/projects/<project>/questions')
     def history(project):
@@ -457,7 +493,7 @@ def serve():
         persisted = conn.execute("SELECT value FROM settings WHERE key='external_llm_approved'").fetchone()
     approved = os.environ.get('EXTERNAL_LLM_APPROVED', persisted[0] if persisted else 'false').lower() == 'true'
     provider = configured_provider()
-    app = create_app(store, service=AnswerService(store, provider, approved, configured_retriever(store, provider)))
+    app = create_app(store, service=AnswerService(store, provider, approved, configured_retriever(store, provider), automatic_external=True))
     if encoder:
         # Upgrade existing lexical-only documents without reparsing or changing canonical IDs.
         with store.connect() as conn:

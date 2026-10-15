@@ -10,11 +10,13 @@ class QuestionQueue:
     def __init__(self, store, service):
         self.store, self.service = store, service
 
-    def submit(self, project, user, question, use_llm=True, conversation_id=None, as_of=None, idempotency_key=None):
+    def submit(self, project, user, question, use_llm=True, conversation_id=None, as_of=None, idempotency_key=None, model_id=None):
         if not isinstance(question, str) or not 1 <= len(question.strip()) <= 2000:
             raise ValueError('Вопрос: 1–2000 символов.')
         if type(use_llm) is not bool:
             raise ValueError('use_llm должен быть boolean.')
+        if model_id is not None:
+            self.service.validate_model(model_id)
         if as_of is not None:
             try:
                 date.fromisoformat(as_of)
@@ -28,7 +30,7 @@ class QuestionQueue:
             self.store.project_access(conn, project, user)
             existing = conn.execute('SELECT * FROM question_jobs WHERE project_id=? AND user_id=? AND idempotency_key=?', (project, user, key)).fetchone()
             if existing:
-                if existing['question'] != question.strip() or existing['use_llm'] != int(use_llm) or existing['as_of'] != as_of or (conversation_id and existing['conversation_id'] != conversation_id):
+                if existing['question'] != question.strip() or existing['use_llm'] != int(use_llm) or existing['as_of'] != as_of or existing['model_id'] != model_id or (conversation_id and existing['conversation_id'] != conversation_id):
                     raise ValueError('Idempotency-Key уже использован для другого запроса.')
                 return dict(existing)
             if conversation_id:
@@ -40,8 +42,8 @@ class QuestionQueue:
             if conn.execute("SELECT count(*) FROM question_jobs WHERE project_id=? AND user_id=? AND status IN ('queued','running')", (project, user)).fetchone()[0] >= 5:
                 raise ValueError('Уже ожидают обработки пять вопросов. Дождитесь результата.')
             job_id = uid()
-            conn.execute('INSERT INTO question_jobs(id,project_id,user_id,conversation_id,question,use_llm,as_of,idempotency_key) VALUES(?,?,?,?,?,?,?,?)',
-                         (job_id, project, user, conversation_id, question.strip(), int(use_llm), as_of, key))
+            conn.execute('INSERT INTO question_jobs(id,project_id,user_id,conversation_id,question,use_llm,as_of,idempotency_key,model_id) VALUES(?,?,?,?,?,?,?,?,?)',
+                         (job_id, project, user, conversation_id, question.strip(), int(use_llm), as_of, key, model_id))
             return dict(id=job_id, conversation_id=conversation_id, status='queued')
 
     def get(self, job_id, user):
@@ -83,7 +85,8 @@ class QuestionQueue:
             conn.execute("UPDATE question_jobs SET status='running',attempts=attempts+1,updated=CURRENT_TIMESTAMP WHERE id=?", (job['id'],))
         try:
             self.service.ask(job['project_id'], job['user_id'], job['question'], bool(job['use_llm']),
-                             conversation_id=job['conversation_id'], as_of=job['as_of'], answer_id=job['id'])
+                             conversation_id=job['conversation_id'], as_of=job['as_of'], answer_id=job['id'],
+                             **({'model_id':job['model_id']} if job['model_id'] is not None else {}))
             with self.store.connect() as conn:
                 conn.execute("UPDATE question_jobs SET status='done',error=NULL,updated=CURRENT_TIMESTAMP WHERE id=?", (job['id'],))
         except Exception as exc:
