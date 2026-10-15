@@ -1,0 +1,271 @@
+{
+  "synthetic_only": true,
+  "persistent_user_data_modified": false,
+  "local_checks": [
+    {
+      "id": "different_products",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "same_amount_incompatible_operators",
+      "expected": "nonempty",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_durations",
+      "expected": "nonempty",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_periods",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "json_schema_claim_type",
+      "expected": "reject assessment object inside claims",
+      "observed": "rejected",
+      "passed": true,
+      "requirements": [
+        "GC-07",
+        "GC-07a"
+      ]
+    },
+    {
+      "id": "operator_validator",
+      "expected": "deterministic rejection of changed operator",
+      "observed": "rejected",
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "unrelated_amendment_validator",
+      "expected": "needs_review or rejection",
+      "observed": "needs_review",
+      "passed": true,
+      "requirements": [
+        "FR-11",
+        "FR-21",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "historical_version_retrieval",
+      "expected": "prior version present for historical date",
+      "observed": {
+        "old_version_present": true
+      },
+      "passed": true,
+      "requirements": [
+        "FR-19",
+        "FR-21"
+      ]
+    },
+    {
+      "id": "metadata_date_validation",
+      "expected": "400 for invalid date",
+      "observed": 400,
+      "passed": true,
+      "requirements": [
+        "FR-09",
+        "FR-10"
+      ]
+    },
+    {
+      "id": "direct_pdf_export",
+      "expected": "application/pdf and PDF signature",
+      "observed": {
+        "status": 200,
+        "mime": "application/pdf"
+      },
+      "passed": true,
+      "requirements": [
+        "TZ-2.1"
+      ]
+    }
+  ],
+  "live_checks": [
+    {
+      "id": "amendment_before",
+      "expected": "historical_10",
+      "automated_pass": null,
+      "answer": "Дата проверки предшествует изменению; новая норма ещё не вступила в силу. Дата изменения: 2026-07-01. Для даты проверки: 10 млн руб..\n\nС 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб. [1] [2]\n\nС 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составлял 10 млн руб. [3]\n\nПроверка норм по первоисточникам:\n\nДата проверки предшествует изменению; новая норма ещё не вступила в силу. Дата изменения: 2026-07-01. Для даты проверки: 10 млн руб..\n\n«Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб.» [2]\n\n«Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб.» [3]\n\n«Решение правления. С 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит.» [1]\n",
+      "mode": "gigachat_answer",
+      "verification_status": "citations_checked",
+      "statuses": [
+        "explained_by_amendment"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "dc56989dc0b75624ef43799e6e469a09",
+            "dd0363f6ad51b6b503a27ab3e3fd66f3",
+            "4a89f429c0e3c05b2a9746f87de36256"
+          ],
+          "status": "explained_by_amendment",
+          "explanation": "Дата проверки предшествует изменению; новая норма ещё не вступила в силу. Дата изменения: 2026-07-01. Для даты проверки: 10 млн руб..",
+          "evidence": [
+            {
+              "block_id": "dc56989dc0b75624ef43799e6e469a09",
+              "quote": "Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб."
+            },
+            {
+              "block_id": "dd0363f6ad51b6b503a27ab3e3fd66f3",
+              "quote": "Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб."
+            },
+            {
+              "block_id": "4a89f429c0e3c05b2a9746f87de36256",
+              "quote": "Решение правления. С 01.07.2026 пункт 4.2 Кредитной политики изменяется: лимит кредитного комитета по одной рублёвой сделке малого бизнеса увеличивается с 10 млн руб. до 15 млн руб. Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "money",
+              "value": "1.5E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            },
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            }
+          ],
+          "applicable_fact": {
+            "kind": "money",
+            "value": "1E+7",
+            "unit": "RUB",
+            "operator": "eq",
+            "exact": "10 млн руб.",
+            "as_of": "2026-03-01"
+          },
+          "method": "deterministic",
+          "amendment": "2026-07-01"
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор."
+      ],
+      "source_count": 3,
+      "model_version": "GigaChat-3-Pro:32.4.30.3",
+      "synthetic_model_responses": [
+        "{\n    \"claims\": [\n        {\n            \"text\": \"С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб.\",\n            \"evidence\": [\n                {\n                    \"block_id\": \"4a89f429c0e3c05b2a9746f87de36256\",\n                    \"quote\": \"Пункт 3.1 Положения о кредитном комитете подтверждает новый лимит.\"\n                },\n                {\n                    \"block_id\": \"dc56989dc0b75624ef43799e6e469a09\",\n                    \"quote\": \"Положение о кредитном комитете, пункт 3.1. С 01.07.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 15 млн руб.\"\n                }\n            ]\n        },\n        {\n            \"text\": \"С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составлял 10 млн руб.\",\n            \"evidence\": [\n                {\n                    \"block_id\": \"dd0363f6ad51b6b503a27ab3e3fd66f3\",\n                    \"quote\": \"Кредитная политика, пункт 4.2. С 01.01.2026 лимит кредитного комитета по одной рублёвой сделке малого бизнеса составляет 10 млн руб.\"\n                }\n            ]\n        }\n    ],\n    \"assessments\": [],\n    \"limitations\": []\n}",
+        "{\n    \"judgments\": [\n        {\n            \"index\": 0,\n            \"supported\": true\n        },\n        {\n            \"index\": 1,\n            \"supported\": true\n        }\n    ]\n}"
+      ],
+      "llm_diagnostics": [
+        {
+          "status": "succeeded",
+          "stage": "answer",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 989,
+              "completion_tokens": 461,
+              "total_tokens": 1450,
+              "precached_prompt_tokens": 0
+            },
+            "elapsed_ms": 6175,
+            "input_tokens": 1576,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "c6ccf7ddc6a18cd706ae3de18a8c2e034d59e8db69b6af04ac4a8eda2e35df79",
+            "stage": "answer",
+            "prompt_version": "147ffee4fba553054b8879bb8cad613e7aa60df8fb422f11567a732ad83fd40c",
+            "source_block_ids": [
+              "4a89f429c0e3c05b2a9746f87de36256",
+              "dc56989dc0b75624ef43799e6e469a09",
+              "dd0363f6ad51b6b503a27ab3e3fd66f3"
+            ],
+            "call_id": "2809d69413e5457a8363bb4ad04fe1cd"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "ef19aef01fc34a63839f52c99faa002c",
+            "input_tokens": 1576
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "entailment",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 465,
+              "completion_tokens": 66,
+              "total_tokens": 531,
+              "precached_prompt_tokens": 0
+            },
+            "elapsed_ms": 1512,
+            "input_tokens": 787,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "63fa982fc85b7c00088a15338eb2c4220d58d23c72b17ec778aafb09addb6117",
+            "stage": "entailment",
+            "prompt_version": "289ab13d4d197df78fc4d6b39dba77e53212bfa641d208be2af9651c5b8753e4",
+            "source_block_ids": [
+              "4a89f429c0e3c05b2a9746f87de36256",
+              "dc56989dc0b75624ef43799e6e469a09",
+              "dd0363f6ad51b6b503a27ab3e3fd66f3"
+            ],
+            "call_id": "5bf355cc5f4e4548aedfc8268ddf382d"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "f6afd1902a6b4084b375980cf313b0ba",
+            "input_tokens": 787
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Intentional impossible versions: installation must fail if pulled transitively.
+openai==0
+tiktoken==0

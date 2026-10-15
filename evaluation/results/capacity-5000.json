@@ -1,0 +1,469 @@
+{
+  "synthetic_only": true,
+  "real_ocr": true,
+  "external_calls": 0,
+  "embedding_enabled": false,
+  "reranking_enabled": false,
+  "expected_text_pages": 4500,
+  "expected_ocr_pages": 500,
+  "documents": [
+    {
+      "name": "text-0.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-100.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-200.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.22
+    },
+    {
+      "name": "text-300.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-400.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.33
+    },
+    {
+      "name": "text-500.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-600.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-700.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-800.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-900.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1000.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1100.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1200.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1300.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1400.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1500.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1600.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1700.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1800.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-1900.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2000.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2100.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2200.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2300.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2400.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2500.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2600.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2700.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2800.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-2900.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3000.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3100.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.22
+    },
+    {
+      "name": "text-3200.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3300.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3400.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3500.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3600.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3700.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3800.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-3900.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-4000.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-4100.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-4200.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-4300.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "text-4400.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 0,
+      "status": "ready",
+      "unreadable": 0,
+      "seconds": 0.23
+    },
+    {
+      "name": "ocr-0.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 100,
+      "status": "ready_with_warnings",
+      "unreadable": 0,
+      "seconds": 26.08
+    },
+    {
+      "name": "ocr-100.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 100,
+      "status": "ready_with_warnings",
+      "unreadable": 0,
+      "seconds": 26.15
+    },
+    {
+      "name": "ocr-200.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 100,
+      "status": "ready_with_warnings",
+      "unreadable": 0,
+      "seconds": 27.2
+    },
+    {
+      "name": "ocr-300.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 100,
+      "status": "ready_with_warnings",
+      "unreadable": 0,
+      "seconds": 26.67
+    },
+    {
+      "name": "ocr-400.pdf",
+      "expected": 100,
+      "pages": 100,
+      "ocr_pages": 100,
+      "status": "ready_with_warnings",
+      "unreadable": 0,
+      "seconds": 26.53
+    }
+  ],
+  "pages": 5000,
+  "ocr_pages": 500,
+  "search_seconds": 0.509,
+  "retrieved_sources": 10,
+  "searched_documents": 50,
+  "elapsed_seconds": 150.9,
+  "database_bytes": 43479040,
+  "passed": true
+}

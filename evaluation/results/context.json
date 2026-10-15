@@ -1,0 +1,202 @@
+[
+  {
+    "id": "pair-1",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-2",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-3",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-4",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-5",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-6",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 5,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-7",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 6,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-8",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 5,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "pair-9",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-21",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-26",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-32",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-33",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-40",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-41",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 4,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-44",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 4,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "file-48",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 4,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "gost-access",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 5,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "gost-ocr-code",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 7,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "gost-levels",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 3,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "gost-evidence",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 6,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "gost-exclusions",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 6,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "gost-link",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 2,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "absent",
+    "expected_in_final_context": null,
+    "source_count": 8,
+    "documents_in_context": 3,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  },
+  {
+    "id": "injection",
+    "expected_in_final_context": true,
+    "source_count": 8,
+    "documents_in_context": 8,
+    "selected_documents": 50,
+    "provider": "stub, no generation evaluated"
+  }
+]

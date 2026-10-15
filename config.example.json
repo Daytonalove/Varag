@@ -1,0 +1,23 @@
+{
+  "storage": {"database": "data/library.sqlite3"},
+  "retrieval": {
+    "mode": "hybrid",
+    "model_id": "intfloat/multilingual-e5-small",
+    "model_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+    "model_directory": "models/multilingual-e5-small",
+    "chunk_characters": 700,
+    "top_k": 8,
+    "context_characters": 14000
+  },
+  "ocr": {"enabled": true, "force_pdf_ocr": false, "languages": "rus+eng", "page_timeout_seconds": 90},
+  "gateway": {
+    "base_url": "https://api.giga.chat/v1",
+    "oauth_url": "https://ngw.devices.sberbank.ru:9443/api/v2/oauth",
+    "scope": "GIGACHAT_API_PERS",
+    "model": "GigaChat-2",
+    "key_file": "secrets/gigachat.key",
+    "ca_file": "",
+    "timeout_seconds": 90,
+    "max_output_tokens": 1800
+  }
+}

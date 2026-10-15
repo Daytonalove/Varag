@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Варяг: API + интерфейс",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/manage.py",
+      "args": ["bank"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "subProcess": true,
+      "justMyCode": true,
+      "env": {"PYTHONUNBUFFERED": "1", "TOKENIZERS_PARALLELISM": "false"}
+    },
+    {
+      "name": "RAG: unit tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "unittest",
+      "args": ["discover", "-s", "tests", "-v"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

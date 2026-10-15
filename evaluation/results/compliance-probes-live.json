@@ -1,0 +1,287 @@
+{
+  "synthetic_only": true,
+  "persistent_user_data_modified": false,
+  "local_checks": [
+    {
+      "id": "different_products",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "same_amount_incompatible_operators",
+      "expected": "nonempty",
+      "observed": [],
+      "passed": false,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_durations",
+      "expected": "nonempty",
+      "observed": [],
+      "passed": false,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_periods",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": false,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "json_schema_claim_type",
+      "expected": "reject assessment object inside claims",
+      "observed": "accepted",
+      "passed": false,
+      "requirements": [
+        "GC-07",
+        "GC-07a"
+      ]
+    },
+    {
+      "id": "operator_validator",
+      "expected": "deterministic rejection of changed operator",
+      "observed": "accepted; relies on LLM entailment",
+      "passed": false,
+      "requirements": [
+        "FR-17",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "unrelated_amendment_validator",
+      "expected": "needs_review or rejection",
+      "observed": "explained_by_amendment",
+      "passed": false,
+      "requirements": [
+        "FR-11",
+        "FR-21",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "historical_version_retrieval",
+      "expected": "prior version present for historical date",
+      "observed": {
+        "old_version_present": false
+      },
+      "passed": false,
+      "requirements": [
+        "FR-19",
+        "FR-21"
+      ]
+    },
+    {
+      "id": "metadata_date_validation",
+      "expected": "400 for invalid date",
+      "observed": 200,
+      "passed": false,
+      "requirements": [
+        "FR-09",
+        "FR-10"
+      ]
+    },
+    {
+      "id": "direct_pdf_export",
+      "expected": "application/pdf and PDF signature",
+      "observed": {
+        "status": 200,
+        "mime": "application/json"
+      },
+      "passed": false,
+      "requirements": [
+        "TZ-2.1"
+      ]
+    }
+  ],
+  "live_checks": [
+    {
+      "id": "amendment_after",
+      "expected": "explained_by_amendment",
+      "automated_pass": false,
+      "answer": "Анализ GigaChat не завершён. Доступны найденные источники и предварительные локальные расхождения.",
+      "mode": "gigachat_failed",
+      "verification_status": "needs_review",
+      "statuses": [
+        "potential_unresolved_conflict"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "c3f1ebf428893a4dae5da7b4644fed51",
+            "4e2d5e2fd8851b399cde7aa2c0f89228"
+          ],
+          "status": "potential_unresolved_conflict",
+          "explanation": "Разные значения; применимость, период и основание приоритета требуют проверки. Правильное значение не выбрано.",
+          "normalized_values": [
+            {
+              "value": "1.5E+7",
+              "currency": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            },
+            {
+              "value": "1E+7",
+              "currency": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "Проверка неполная: полное разрешение перекрёстных ссылок и проверка применимости ещё не реализованы.",
+        "Claims-индекс выключен. Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Период действия и основания отмены не подтверждены; итоговое суждение принимает аудитор.",
+        "Ответ модели отклонён проверкой источников, чисел или схемы."
+      ],
+      "source_count": 3,
+      "model_version": "GigaChat-3-Pro"
+    },
+    {
+      "id": "amendment_before",
+      "expected": "historical_10",
+      "automated_pass": null,
+      "answer": "Анализ GigaChat не завершён. Доступны найденные источники и предварительные локальные расхождения.",
+      "mode": "gigachat_failed",
+      "verification_status": "needs_review",
+      "statuses": [
+        "potential_unresolved_conflict"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "360e219c5a0f0f28b5ad72b4911c203e",
+            "8bbe326d6de21499583ccd892360d6b1"
+          ],
+          "status": "potential_unresolved_conflict",
+          "explanation": "Разные значения; применимость, период и основание приоритета требуют проверки. Правильное значение не выбрано.",
+          "normalized_values": [
+            {
+              "value": "1.5E+7",
+              "currency": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            },
+            {
+              "value": "1E+7",
+              "currency": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "Проверка неполная: полное разрешение перекрёстных ссылок и проверка применимости ещё не реализованы.",
+        "Claims-индекс выключен. Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Период действия и основания отмены не подтверждены; итоговое суждение принимает аудитор.",
+        "Ответ модели отклонён проверкой источников, чисел или схемы."
+      ],
+      "source_count": 3,
+      "model_version": "GigaChat-3-Pro"
+    },
+    {
+      "id": "products",
+      "expected": "different_scope_no_conflict",
+      "automated_pass": true,
+      "answer": "Лимит кредитного комитета на ипотечную сделку составляет 10 млн руб. [1]\n\nЛимит кредитного комитета на потребительскую сделку составляет 15 млн руб. [2]",
+      "mode": "gigachat_answer",
+      "verification_status": "citations_checked",
+      "statuses": [
+        "different_scope_no_conflict"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "1a79320527e03ab6c30cfcd13f0c4723",
+            "321570349f9d58116688715129a3cd2f"
+          ],
+          "status": "different_scope_no_conflict",
+          "explanation": "Различаются явно указанные валюты или области применения; безусловный конфликт не установлен.",
+          "normalized_values": [
+            {
+              "value": "1E+7",
+              "currency": "RUB",
+              "operator": "eq",
+              "exact": "10 млн руб."
+            },
+            {
+              "value": "1.5E+7",
+              "currency": "RUB",
+              "operator": "eq",
+              "exact": "15 млн руб."
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        "Проверка неполная: полное разрешение перекрёстных ссылок и проверка применимости ещё не реализованы.",
+        "Claims-индекс выключен. Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Период действия и основания отмены не подтверждены; итоговое суждение принимает аудитор."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3"
+    },
+    {
+      "id": "working_days",
+      "expected": "potential_unresolved_conflict",
+      "automated_pass": false,
+      "answer": "Срок рассмотрения заявки кредитным комитетом составляет 10 рабочих дней. [1]\n\nСрок рассмотрения заявки кредитным комитетом составляет 5 рабочих дней. [2]",
+      "mode": "gigachat_answer",
+      "verification_status": "citations_checked",
+      "statuses": [],
+      "discrepancies": [],
+      "warnings": [
+        "Проверка неполная: полное разрешение перекрёстных ссылок и проверка применимости ещё не реализованы.",
+        "Claims-индекс выключен. Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Период действия и основания отмены не подтверждены; итоговое суждение принимает аудитор.",
+        "Существенно не хватает информации о том, какой из указанных сроков является действующим на момент проверки (as_of), а также об области применения каждого срока (например, тип продукта или категория клиента).",
+        "Часть утверждений не прошла смысловую проверку и исключена."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3"
+    },
+    {
+      "id": "operators",
+      "expected": "potential_unresolved_conflict",
+      "automated_pass": false,
+      "answer": "Лимит кредитного комитета на сделку — не более 10 млн руб. [1]",
+      "mode": "gigachat_answer",
+      "verification_status": "citations_checked",
+      "statuses": [],
+      "discrepancies": [],
+      "warnings": [
+        "Проверка неполная: полное разрешение перекрёстных ссылок и проверка применимости ещё не реализованы.",
+        "Claims-индекс выключен. Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Период действия и основания отмены не подтверждены; итоговое суждение принимает аудитор.",
+        "Не указано, какой тип лимита применяется (сделка или клиент), оператор и период действия; есть противоречие между двумя источниками по значению лимита",
+        "Часть утверждений не прошла смысловую проверку и исключена."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3"
+    }
+  ]
+}

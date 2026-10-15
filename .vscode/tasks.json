@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {"label": "RAG: установка", "type": "process", "command": "python3.12", "args": ["scripts/bootstrap.py"], "problemMatcher": []},
+    {"label": "RAG: скачать модель поиска", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "download-model"], "problemMatcher": []},
+    {"label": "RAG: настройка ключа и CA", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "configure"], "problemMatcher": []},
+    {"label": "RAG: диагностика", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "doctor"], "problemMatcher": []},
+    {"label": "RAG: тест OCR и семантического поиска", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "selftest"], "problemMatcher": []},
+    {"label": "RAG: загрузить примеры", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "demo"], "problemMatcher": []},
+    {"label": "RAG: запустить", "type": "process", "command": "${workspaceFolder}/.venv/bin/python", "args": ["manage.py", "bank"], "problemMatcher": []}
+  ]
+}

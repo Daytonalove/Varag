@@ -1,0 +1,1641 @@
+{
+  "config": {
+    "retrieval": {
+      "mode": "hybrid",
+      "model_id": "intfloat/multilingual-e5-small",
+      "model_revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "model_directory": "local-model",
+      "chunk_characters": 700,
+      "top_k": 8,
+      "context_characters": 14000
+    },
+    "platform": "macOS-26.6-arm64-arm-64bit",
+    "python": "3.12.14"
+  },
+  "ingestion": [],
+  "queries": [
+    {
+      "id": "pair-1",
+      "question": "Через какое время блокируется учетная запись уволенного сотрудника АБС?",
+      "kind": "compatible_stricter_deadline",
+      "expected_documents": [
+        "01-access-policy.txt",
+        "02-access-procedure.txt"
+      ],
+      "retrieved_documents": [
+        "01-access-policy.txt",
+        "02-access-procedure.txt",
+        "03-retention-policy.txt",
+        "04-retention-procedure.txt",
+        "07-shared-deny.txt",
+        "08-shared-allow.txt",
+        "13-range-min.txt",
+        "14-range-actual.txt"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 2.9006,
+      "hits": [
+        {
+          "document": "01-access-policy.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "02-access-procedure.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "14-range-actual.txt",
+          "locator": "текст",
+          "score": 0.029631255487269532
+        },
+        {
+          "document": "13-range-min.txt",
+          "locator": "текст",
+          "score": 0.029236022193768675
+        },
+        {
+          "document": "07-shared-deny.txt",
+          "locator": "текст",
+          "score": 0.029206349206349208
+        },
+        {
+          "document": "04-retention-procedure.txt",
+          "locator": "текст",
+          "score": 0.02844551282051282
+        },
+        {
+          "document": "03-retention-policy.txt",
+          "locator": "текст",
+          "score": 0.028371628371628373
+        },
+        {
+          "document": "08-shared-allow.txt",
+          "locator": "текст",
+          "score": 0.028083267871170464
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-2",
+      "question": "Сколько дней хранится журнал событий безопасности АБС?",
+      "kind": "contradiction",
+      "expected_documents": [
+        "03-retention-policy.txt",
+        "04-retention-procedure.txt"
+      ],
+      "retrieved_documents": [
+        "03-retention-policy.txt",
+        "04-retention-procedure.txt",
+        "09-version-old.txt",
+        "10-version-new.txt",
+        "13-range-min.txt",
+        "14-range-actual.txt",
+        "15-duplicate-a.txt",
+        "16-duplicate-b.txt"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0731,
+      "hits": [
+        {
+          "document": "14-range-actual.txt",
+          "locator": "текст",
+          "score": 0.032266458495966696
+        },
+        {
+          "document": "03-retention-policy.txt",
+          "locator": "текст",
+          "score": 0.032266458495966696
+        },
+        {
+          "document": "13-range-min.txt",
+          "locator": "текст",
+          "score": 0.031754032258064516
+        },
+        {
+          "document": "04-retention-procedure.txt",
+          "locator": "текст",
+          "score": 0.031754032258064516
+        },
+        {
+          "document": "10-version-new.txt",
+          "locator": "текст",
+          "score": 0.030309988518943745
+        },
+        {
+          "document": "09-version-old.txt",
+          "locator": "текст",
+          "score": 0.029857397504456328
+        },
+        {
+          "document": "15-duplicate-a.txt",
+          "locator": "текст",
+          "score": 0.02900988017658188
+        },
+        {
+          "document": "16-duplicate-b.txt",
+          "locator": "текст",
+          "score": 0.028594771241830064
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-3",
+      "question": "Как часто создается полная резервная копия базы АБС?",
+      "kind": "ambiguous_periodicity",
+      "expected_documents": [
+        "05-backup-policy.txt",
+        "06-backup-procedure.txt"
+      ],
+      "retrieved_documents": [
+        "03-retention-policy.txt",
+        "04-retention-procedure.txt",
+        "05-backup-policy.txt",
+        "06-backup-procedure.txt",
+        "08-shared-allow.txt",
+        "13-range-min.txt",
+        "14-range-actual.txt",
+        "15-duplicate-a.txt"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0732,
+      "hits": [
+        {
+          "document": "05-backup-policy.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "06-backup-procedure.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "14-range-actual.txt",
+          "locator": "текст",
+          "score": 0.03125763125763126
+        },
+        {
+          "document": "13-range-min.txt",
+          "locator": "текст",
+          "score": 0.03007688828584351
+        },
+        {
+          "document": "03-retention-policy.txt",
+          "locator": "текст",
+          "score": 0.02976190476190476
+        },
+        {
+          "document": "04-retention-procedure.txt",
+          "locator": "текст",
+          "score": 0.0293236301369863
+        },
+        {
+          "document": "15-duplicate-a.txt",
+          "locator": "текст",
+          "score": 0.029138513513513514
+        },
+        {
+          "document": "08-shared-allow.txt",
+          "locator": "текст",
+          "score": 0.02900988017658188
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-4",
+      "question": "Разрешена ли общая учетная запись администратора АБС?",
+      "kind": "contradiction",
+      "expected_documents": [
+        "07-shared-deny.txt",
+        "08-shared-allow.txt"
+      ],
+      "retrieved_documents": [
+        "01-access-policy.txt",
+        "02-access-procedure.txt",
+        "07-shared-deny.txt",
+        "08-shared-allow.txt",
+        "13-range-min.txt",
+        "14-range-actual.txt",
+        "17-overlap-a.txt",
+        "18-overlap-b.txt"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0734,
+      "hits": [
+        {
+          "document": "07-shared-deny.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "08-shared-allow.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "01-access-policy.txt",
+          "locator": "текст",
+          "score": 0.03036576949620428
+        },
+        {
+          "document": "14-range-actual.txt",
+          "locator": "текст",
+          "score": 0.03007688828584351
+        },
+        {
+          "document": "17-overlap-a.txt",
+          "locator": "текст",
+          "score": 0.029957522915269395
+        },
+        {
+          "document": "02-access-procedure.txt",
+          "locator": "текст",
+          "score": 0.029910714285714284
+        },
+        {
+          "document": "13-range-min.txt",
+          "locator": "текст",
+          "score": 0.02967032967032967
+        },
+        {
+          "document": "18-overlap-b.txt",
+          "locator": "текст",
+          "score": 0.029513888888888888
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-5",
+      "question": "Как изменился период проверки прав с редакции 2024 на редакцию 2026?",
+      "kind": "version_change",
+      "expected_documents": [
+        "09-version-old.txt",
+        "10-version-new.txt"
+      ],
+      "retrieved_documents": [
+        "03-retention-policy.txt",
+        "04-retention-procedure.txt",
+        "05-backup-policy.txt",
+        "06-backup-procedure.txt",
+        "07-shared-deny.txt",
+        "08-shared-allow.txt",
+        "09-version-old.txt",
+        "10-version-new.txt"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0742,
+      "hits": [
+        {
+          "document": "10-version-new.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "09-version-old.txt",
+          "locator": "текст",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "04-retention-procedure.txt",
+          "locator": "текст",
+          "score": 0.029138513513513514
+        },
+        {
+          "document": "03-retention-policy.txt",
+          "locator": "текст",
+          "score": 0.029083245521601686
+        },
+        {
+          "document": "05-backup-policy.txt",
+          "locator": "текст",
+          "score": 0.028484848484848488
+        },
+        {
+          "document": "07-shared-deny.txt",
+          "locator": "текст",
+          "score": 0.028370221327967807
+        },
+        {
+          "document": "06-backup-procedure.txt",
+          "locator": "текст",
+          "score": 0.02786377708978328
+        },
+        {
+          "document": "08-shared-allow.txt",
+          "locator": "текст",
+          "score": 0.027777777777777776
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-6",
+      "question": "Где допускается личное мобильное устройство: в производственной или учебной среде?",
+      "kind": "different_scope",
+      "expected_documents": [
+        "11-scope-prod.txt",
+        "12-scope-lab.txt"
+      ],
+      "retrieved_documents": [
+        "11-scope-prod.txt",
+        "12-scope-lab.txt",
+        "27-long-07.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0725,
+      "hits": [
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 44",
+          "score": 0.01639344262295082
+        },
+        {
+          "document": "12-scope-lab.txt",
+          "locator": "текст",
+          "score": 0.01639344262295082
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 58",
+          "score": 0.016129032258064516
+        },
+        {
+          "document": "27-long-07.pdf",
+          "locator": "страница 10",
+          "score": 0.016129032258064516
+        },
+        {
+          "document": "27-long-07.pdf",
+          "locator": "страница 4",
+          "score": 0.015873015873015872
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 12",
+          "score": 0.015151515151515152
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 12",
+          "score": 0.014925373134328358
+        },
+        {
+          "document": "11-scope-prod.txt",
+          "locator": "текст",
+          "score": 0.013513513513513514
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-7",
+      "question": "Совместимы ли сроки хранения архива заявок на доступ: не менее 90 и 365 дней?",
+      "kind": "compatible",
+      "expected_documents": [
+        "13-range-min.txt",
+        "14-range-actual.txt"
+      ],
+      "retrieved_documents": [
+        "03-retention-policy.txt",
+        "04-retention-procedure.txt",
+        "13-range-min.txt",
+        "14-range-actual.txt",
+        "43-scan-03.pdf",
+        "gost-57580.1-2017.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0739,
+      "hits": [
+        {
+          "document": "13-range-min.txt",
+          "locator": "текст",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "14-range-actual.txt",
+          "locator": "текст",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 35",
+          "score": 0.03149801587301587
+        },
+        {
+          "document": "03-retention-policy.txt",
+          "locator": "текст",
+          "score": 0.031024531024531024
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 22",
+          "score": 0.030776515151515152
+        },
+        {
+          "document": "04-retention-procedure.txt",
+          "locator": "текст",
+          "score": 0.03076923076923077
+        },
+        {
+          "document": "43-scan-03.pdf",
+          "locator": "страница 2",
+          "score": 0.028438886647841874
+        },
+        {
+          "document": "43-scan-03.pdf",
+          "locator": "страница 1",
+          "score": 0.02819138376017471
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-8",
+      "question": "Где регистрируется каждый инцидент безопасности?",
+      "kind": "duplicate",
+      "expected_documents": [
+        "15-duplicate-a.txt",
+        "16-duplicate-b.txt"
+      ],
+      "retrieved_documents": [
+        "15-duplicate-a.txt",
+        "16-duplicate-b.txt",
+        "26-long-06.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0724,
+      "hits": [
+        {
+          "document": "15-duplicate-a.txt",
+          "locator": "текст",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "16-duplicate-b.txt",
+          "locator": "текст",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 40",
+          "score": 0.024722573395139766
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 38",
+          "score": 0.02471590909090909
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 13",
+          "score": 0.015384615384615385
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 22",
+          "score": 0.015384615384615385
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 26",
+          "score": 0.015151515151515152
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 14",
+          "score": 0.014705882352941176
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "pair-9",
+      "question": "Кто должен одобрить выдачу прав на АБС?",
+      "kind": "overlap",
+      "expected_documents": [
+        "17-overlap-a.txt",
+        "18-overlap-b.txt"
+      ],
+      "retrieved_documents": [
+        "07-shared-deny.txt",
+        "08-shared-allow.txt",
+        "09-version-old.txt",
+        "10-version-new.txt",
+        "13-range-min.txt",
+        "14-range-actual.txt",
+        "17-overlap-a.txt",
+        "18-overlap-b.txt"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0726,
+      "hits": [
+        {
+          "document": "18-overlap-b.txt",
+          "locator": "текст",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "10-version-new.txt",
+          "locator": "текст",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "09-version-old.txt",
+          "locator": "текст",
+          "score": 0.03125763125763126
+        },
+        {
+          "document": "14-range-actual.txt",
+          "locator": "текст",
+          "score": 0.030090497737556562
+        },
+        {
+          "document": "17-overlap-a.txt",
+          "locator": "текст",
+          "score": 0.029910714285714284
+        },
+        {
+          "document": "08-shared-allow.txt",
+          "locator": "текст",
+          "score": 0.02976190476190476
+        },
+        {
+          "document": "13-range-min.txt",
+          "locator": "текст",
+          "score": 0.029418126757516764
+        },
+        {
+          "document": "07-shared-deny.txt",
+          "locator": "текст",
+          "score": 0.029236022193768675
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-21",
+      "question": "Контрольный объект ЛОТОС-01 Кто ответственный?",
+      "kind": "text_pdf",
+      "expected_documents": [
+        "21-long-01.pdf"
+      ],
+      "retrieved_documents": [
+        "21-long-01.pdf",
+        "22-long-02.pdf",
+        "23-long-03.pdf",
+        "26-long-06.pdf",
+        "28-long-08.pdf",
+        "32-long-12.pdf",
+        "33-word-01.docx",
+        "34-word-02.docx"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0731,
+      "hits": [
+        {
+          "document": "33-word-01.docx",
+          "locator": "блок 4",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "23-long-03.pdf",
+          "locator": "страница 28",
+          "score": 0.031754032258064516
+        },
+        {
+          "document": "21-long-01.pdf",
+          "locator": "страница 28",
+          "score": 0.0315136476426799
+        },
+        {
+          "document": "22-long-02.pdf",
+          "locator": "страница 28",
+          "score": 0.031024531024531024
+        },
+        {
+          "document": "32-long-12.pdf",
+          "locator": "страница 28",
+          "score": 0.030309988518943745
+        },
+        {
+          "document": "34-word-02.docx",
+          "locator": "блок 4",
+          "score": 0.029386529386529386
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 28",
+          "score": 0.0293236301369863
+        },
+        {
+          "document": "28-long-08.pdf",
+          "locator": "страница 28",
+          "score": 0.02821939586645469
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-26",
+      "question": "Контрольный объект ЛОТОС-06 Кто ответственный?",
+      "kind": "text_pdf",
+      "expected_documents": [
+        "26-long-06.pdf"
+      ],
+      "retrieved_documents": [
+        "22-long-02.pdf",
+        "23-long-03.pdf",
+        "26-long-06.pdf",
+        "32-long-12.pdf",
+        "34-word-02.docx",
+        "37-word-05.docx",
+        "38-word-06.docx",
+        "39-word-07.docx"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.073,
+      "hits": [
+        {
+          "document": "38-word-06.docx",
+          "locator": "блок 4",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 28",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "23-long-03.pdf",
+          "locator": "страница 28",
+          "score": 0.031009615384615385
+        },
+        {
+          "document": "32-long-12.pdf",
+          "locator": "страница 28",
+          "score": 0.029877369007803793
+        },
+        {
+          "document": "22-long-02.pdf",
+          "locator": "страница 28",
+          "score": 0.029571646010002173
+        },
+        {
+          "document": "37-word-05.docx",
+          "locator": "блок 4",
+          "score": 0.028693528693528692
+        },
+        {
+          "document": "34-word-02.docx",
+          "locator": "блок 4",
+          "score": 0.028484848484848488
+        },
+        {
+          "document": "39-word-07.docx",
+          "locator": "блок 4",
+          "score": 0.028283227848101264
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-32",
+      "question": "Контрольный объект ЛОТОС-12 Кто ответственный?",
+      "kind": "text_pdf",
+      "expected_documents": [
+        "32-long-12.pdf"
+      ],
+      "retrieved_documents": [
+        "21-long-01.pdf",
+        "22-long-02.pdf",
+        "23-long-03.pdf",
+        "26-long-06.pdf",
+        "28-long-08.pdf",
+        "31-long-11.pdf",
+        "32-long-12.pdf",
+        "34-word-02.docx"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0729,
+      "hits": [
+        {
+          "document": "32-long-12.pdf",
+          "locator": "страница 28",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "23-long-03.pdf",
+          "locator": "страница 28",
+          "score": 0.03200204813108039
+        },
+        {
+          "document": "22-long-02.pdf",
+          "locator": "страница 28",
+          "score": 0.03128054740957967
+        },
+        {
+          "document": "31-long-11.pdf",
+          "locator": "страница 28",
+          "score": 0.030090497737556562
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 28",
+          "score": 0.02976190476190476
+        },
+        {
+          "document": "28-long-08.pdf",
+          "locator": "страница 28",
+          "score": 0.029211087420042643
+        },
+        {
+          "document": "34-word-02.docx",
+          "locator": "блок 4",
+          "score": 0.029138513513513514
+        },
+        {
+          "document": "21-long-01.pdf",
+          "locator": "страница 28",
+          "score": 0.028958333333333336
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-33",
+      "question": "Контрольный объект ВЕГА-01 Кто ответственный?",
+      "kind": "docx",
+      "expected_documents": [
+        "33-word-01.docx"
+      ],
+      "retrieved_documents": [
+        "33-word-01.docx",
+        "34-word-02.docx",
+        "35-word-03.docx",
+        "36-word-04.docx",
+        "37-word-05.docx",
+        "38-word-06.docx",
+        "39-word-07.docx",
+        "40-word-08.docx"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0732,
+      "hits": [
+        {
+          "document": "33-word-01.docx",
+          "locator": "блок 4",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "34-word-02.docx",
+          "locator": "блок 4",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "35-word-03.docx",
+          "locator": "блок 4",
+          "score": 0.03149801587301587
+        },
+        {
+          "document": "37-word-05.docx",
+          "locator": "блок 4",
+          "score": 0.03125763125763126
+        },
+        {
+          "document": "36-word-04.docx",
+          "locator": "блок 4",
+          "score": 0.030330882352941176
+        },
+        {
+          "document": "38-word-06.docx",
+          "locator": "блок 4",
+          "score": 0.030303030303030304
+        },
+        {
+          "document": "40-word-08.docx",
+          "locator": "блок 4",
+          "score": 0.030090497737556562
+        },
+        {
+          "document": "39-word-07.docx",
+          "locator": "блок 4",
+          "score": 0.029850746268656716
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-40",
+      "question": "Контрольный объект ВЕГА-08 Кто ответственный?",
+      "kind": "docx",
+      "expected_documents": [
+        "40-word-08.docx"
+      ],
+      "retrieved_documents": [
+        "33-word-01.docx",
+        "34-word-02.docx",
+        "35-word-03.docx",
+        "36-word-04.docx",
+        "37-word-05.docx",
+        "38-word-06.docx",
+        "39-word-07.docx",
+        "40-word-08.docx"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0728,
+      "hits": [
+        {
+          "document": "40-word-08.docx",
+          "locator": "блок 4",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "33-word-01.docx",
+          "locator": "блок 4",
+          "score": 0.03200204813108039
+        },
+        {
+          "document": "34-word-02.docx",
+          "locator": "блок 4",
+          "score": 0.03149801587301587
+        },
+        {
+          "document": "38-word-06.docx",
+          "locator": "блок 4",
+          "score": 0.031054405392392875
+        },
+        {
+          "document": "35-word-03.docx",
+          "locator": "блок 4",
+          "score": 0.031009615384615385
+        },
+        {
+          "document": "37-word-05.docx",
+          "locator": "блок 4",
+          "score": 0.030303030303030304
+        },
+        {
+          "document": "36-word-04.docx",
+          "locator": "блок 4",
+          "score": 0.030090497737556562
+        },
+        {
+          "document": "39-word-07.docx",
+          "locator": "блок 4",
+          "score": 0.029631255487269532
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-41",
+      "question": "Объект ОРИОН-01 Сколько дней хранится акт?",
+      "kind": "scan_pdf",
+      "expected_documents": [
+        "41-scan-01.pdf"
+      ],
+      "retrieved_documents": [
+        "41-scan-01.pdf",
+        "42-scan-02.pdf",
+        "43-scan-03.pdf",
+        "45-scan-05.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0728,
+      "hits": [
+        {
+          "document": "41-scan-01.pdf",
+          "locator": "страница 1",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "41-scan-01.pdf",
+          "locator": "страница 2",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "42-scan-02.pdf",
+          "locator": "страница 1",
+          "score": 0.03125763125763126
+        },
+        {
+          "document": "42-scan-02.pdf",
+          "locator": "страница 2",
+          "score": 0.030536130536130537
+        },
+        {
+          "document": "45-scan-05.pdf",
+          "locator": "страница 1",
+          "score": 0.029709507042253523
+        },
+        {
+          "document": "43-scan-03.pdf",
+          "locator": "страница 1",
+          "score": 0.029631255487269532
+        },
+        {
+          "document": "45-scan-05.pdf",
+          "locator": "страница 2",
+          "score": 0.02904040404040404
+        },
+        {
+          "document": "43-scan-03.pdf",
+          "locator": "страница 2",
+          "score": 0.028991596638655463
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-44",
+      "question": "Объект ОРИОН-04 Сколько дней хранится акт?",
+      "kind": "scan_pdf",
+      "expected_documents": [
+        "44-scan-04.pdf"
+      ],
+      "retrieved_documents": [
+        "41-scan-01.pdf",
+        "42-scan-02.pdf",
+        "44-scan-04.pdf",
+        "45-scan-05.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.073,
+      "hits": [
+        {
+          "document": "44-scan-04.pdf",
+          "locator": "страница 1",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "44-scan-04.pdf",
+          "locator": "страница 2",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "42-scan-02.pdf",
+          "locator": "страница 1",
+          "score": 0.030309988518943745
+        },
+        {
+          "document": "45-scan-05.pdf",
+          "locator": "страница 1",
+          "score": 0.029957522915269395
+        },
+        {
+          "document": "42-scan-02.pdf",
+          "locator": "страница 2",
+          "score": 0.029857397504456328
+        },
+        {
+          "document": "45-scan-05.pdf",
+          "locator": "страница 2",
+          "score": 0.029513888888888888
+        },
+        {
+          "document": "41-scan-01.pdf",
+          "locator": "страница 1",
+          "score": 0.029273504273504274
+        },
+        {
+          "document": "41-scan-01.pdf",
+          "locator": "страница 2",
+          "score": 0.029236022193768675
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "file-48",
+      "question": "Объект ОРИОН-08 Сколько дней хранится акт?",
+      "kind": "scan_pdf",
+      "expected_documents": [
+        "48-scan-08.pdf"
+      ],
+      "retrieved_documents": [
+        "41-scan-01.pdf",
+        "42-scan-02.pdf",
+        "45-scan-05.pdf",
+        "48-scan-08.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0728,
+      "hits": [
+        {
+          "document": "48-scan-08.pdf",
+          "locator": "страница 1",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "48-scan-08.pdf",
+          "locator": "страница 2",
+          "score": 0.03225806451612903
+        },
+        {
+          "document": "42-scan-02.pdf",
+          "locator": "страница 2",
+          "score": 0.030090497737556562
+        },
+        {
+          "document": "42-scan-02.pdf",
+          "locator": "страница 1",
+          "score": 0.03007688828584351
+        },
+        {
+          "document": "45-scan-05.pdf",
+          "locator": "страница 2",
+          "score": 0.029386529386529386
+        },
+        {
+          "document": "45-scan-05.pdf",
+          "locator": "страница 1",
+          "score": 0.0293236301369863
+        },
+        {
+          "document": "41-scan-01.pdf",
+          "locator": "страница 1",
+          "score": 0.0288981288981289
+        },
+        {
+          "document": "41-scan-01.pdf",
+          "locator": "страница 2",
+          "score": 0.028850145288501453
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "gost-access",
+      "question": "Что требует мера УЗП.1 об учетных записях пользователей?",
+      "kind": "standard",
+      "expected_documents": [
+        "gost-57580.1-2017.pdf"
+      ],
+      "retrieved_documents": [
+        "07-shared-deny.txt",
+        "08-shared-allow.txt",
+        "21-long-01.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0958,
+      "hits": [
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 15",
+          "score": 0.03200204813108039
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 16",
+          "score": 0.032266458495966696
+        },
+        {
+          "document": "07-shared-deny.txt",
+          "locator": "текст",
+          "score": 0.011904761904761904
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 17",
+          "score": 0.011764705882352941
+        },
+        {
+          "document": "08-shared-allow.txt",
+          "locator": "текст",
+          "score": 0.011627906976744186
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 21",
+          "score": 0.010752688172043012
+        },
+        {
+          "document": "21-long-01.pdf",
+          "locator": "страница 21",
+          "score": 0.010526315789473684
+        },
+        {
+          "document": "21-long-01.pdf",
+          "locator": "страница 15",
+          "score": 0.010416666666666666
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "gost-ocr-code",
+      "question": "Что требует мера УЗП.3 об уволенных работниках?",
+      "kind": "standard",
+      "expected_documents": [
+        "gost-57580.1-2017.pdf"
+      ],
+      "retrieved_documents": [
+        "01-access-policy.txt",
+        "02-access-procedure.txt",
+        "23-long-03.pdf",
+        "24-long-04.pdf",
+        "35-word-03.docx",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0954,
+      "hits": [
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 15",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 16",
+          "score": 0.0315136476426799
+        },
+        {
+          "document": "02-access-procedure.txt",
+          "locator": "текст",
+          "score": 0.015873015873015872
+        },
+        {
+          "document": "01-access-policy.txt",
+          "locator": "текст",
+          "score": 0.015384615384615385
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 17",
+          "score": 0.013888888888888888
+        },
+        {
+          "document": "24-long-04.pdf",
+          "locator": "страница 3",
+          "score": 0.01282051282051282
+        },
+        {
+          "document": "23-long-03.pdf",
+          "locator": "страница 3",
+          "score": 0.012195121951219513
+        },
+        {
+          "document": "35-word-03.docx",
+          "locator": "блок 1",
+          "score": 0.011904761904761904
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "gost-levels",
+      "question": "Какие уровни защиты определяет пункт 6.7 ГОСТ 57580.1?",
+      "kind": "standard",
+      "expected_documents": [
+        "gost-57580.1-2017.pdf"
+      ],
+      "retrieved_documents": [
+        "27-long-07.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0967,
+      "hits": [
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 8",
+          "score": 0.02355543987506507
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 12",
+          "score": 0.015151515151515152
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 12",
+          "score": 0.015384615384615385
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 52",
+          "score": 0.027972027972027972
+        },
+        {
+          "document": "27-long-07.pdf",
+          "locator": "страница 6",
+          "score": 0.009174311926605505
+        },
+        {
+          "document": "27-long-07.pdf",
+          "locator": "страница 5",
+          "score": 0.008771929824561403
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 56",
+          "score": 0.027271052146674038
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 33",
+          "score": 0.026494565217391304
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "gost-evidence",
+      "question": "На каких источниках свидетельств основывается оценка согласно пункту 6.13 ГОСТ 57580.2?",
+      "kind": "standard",
+      "expected_documents": [
+        "gost-57580.2-2018.pdf"
+      ],
+      "retrieved_documents": [
+        "21-long-01.pdf",
+        "26-long-06.pdf",
+        "28-long-08.pdf",
+        "29-long-09.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0986,
+      "hits": [
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 14",
+          "score": 0.01950757575757576
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 16",
+          "score": 0.031054405392392875
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 21",
+          "score": 0.030330882352941176
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 31",
+          "score": 0.022474747474747474
+        },
+        {
+          "document": "29-long-09.pdf",
+          "locator": "страница 13",
+          "score": 0.00980392156862745
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 13",
+          "score": 0.009523809523809525
+        },
+        {
+          "document": "28-long-08.pdf",
+          "locator": "страница 13",
+          "score": 0.009433962264150943
+        },
+        {
+          "document": "21-long-01.pdf",
+          "locator": "страница 13",
+          "score": 0.009345794392523364
+        }
+      ],
+      "focused_snippets_found": false
+    },
+    {
+      "id": "gost-exclusions",
+      "question": "Какие области допускается не оценивать согласно пункту 6.11 ГОСТ 57580.2?",
+      "kind": "standard",
+      "expected_documents": [
+        "gost-57580.2-2018.pdf"
+      ],
+      "retrieved_documents": [
+        "26-long-06.pdf",
+        "28-long-08.pdf",
+        "29-long-09.pdf",
+        "31-long-11.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0984,
+      "hits": [
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 9",
+          "score": 0.026547116736990152
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 9",
+          "score": 0.015151515151515152
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 13",
+          "score": 0
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 12",
+          "score": 0.029571646010002173
+        },
+        {
+          "document": "26-long-06.pdf",
+          "locator": "страница 11",
+          "score": 0.02133696515718988
+        },
+        {
+          "document": "31-long-11.pdf",
+          "locator": "страница 11",
+          "score": 0.01282051282051282
+        },
+        {
+          "document": "29-long-09.pdf",
+          "locator": "страница 11",
+          "score": 0.011363636363636364
+        },
+        {
+          "document": "28-long-08.pdf",
+          "locator": "страница 11",
+          "score": 0.011111111111111112
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "gost-link",
+      "question": "Как связаны компенсирующие меры из пункта 6.4 ГОСТ 57580.1 и их оценка по пункту 6.12 ГОСТ 57580.2?",
+      "kind": "standard_cross",
+      "expected_documents": [
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "retrieved_documents": [
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.107,
+      "hits": [
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 12",
+          "score": 0.013888888888888888
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 7",
+          "score": 0
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 9",
+          "score": 0.03252247488101534
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 37",
+          "score": 0.023042071197411
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 10",
+          "score": 0.012658227848101266
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 21",
+          "score": 0.031754032258064516
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 9",
+          "score": 0.031099324975891997
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 13",
+          "score": 0.029030910609857977
+        }
+      ],
+      "focused_snippets_found": true
+    },
+    {
+      "id": "absent",
+      "question": "Какой серийный номер аппаратного модуля криптозащиты установлен в серверной банка?",
+      "kind": "unanswerable",
+      "expected_documents": [],
+      "retrieved_documents": [
+        "22-long-02.pdf",
+        "gost-57580.1-2017.pdf",
+        "gost-57580.2-2018.pdf"
+      ],
+      "all_expected_retrieved": null,
+      "expected_recall": null,
+      "snippets_found": true,
+      "seconds": 0.0733,
+      "hits": [
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 13",
+          "score": 0.03007688828584351
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 11",
+          "score": 0.02886002886002886
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 12",
+          "score": 0.0207597645799893
+        },
+        {
+          "document": "gost-57580.2-2018.pdf",
+          "locator": "страница 11",
+          "score": 0.020673486786018755
+        },
+        {
+          "document": "22-long-02.pdf",
+          "locator": "страница 14",
+          "score": 0.009615384615384616
+        },
+        {
+          "document": "22-long-02.pdf",
+          "locator": "страница 16",
+          "score": 0.008771929824561403
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 64",
+          "score": 0.028258706467661692
+        },
+        {
+          "document": "gost-57580.1-2017.pdf",
+          "locator": "страница 5",
+          "score": 0.02728937728937729
+        }
+      ]
+    },
+    {
+      "id": "injection",
+      "question": "Можно ли объявить полное соответствие ГОСТ на основании непроверенного вложения?",
+      "kind": "prompt_injection",
+      "expected_documents": [
+        "19-injection.txt"
+      ],
+      "retrieved_documents": [
+        "19-injection.txt",
+        "33-word-01.docx",
+        "34-word-02.docx",
+        "35-word-03.docx",
+        "36-word-04.docx",
+        "37-word-05.docx",
+        "38-word-06.docx",
+        "39-word-07.docx"
+      ],
+      "all_expected_retrieved": true,
+      "expected_recall": 1.0,
+      "snippets_found": true,
+      "seconds": 0.0741,
+      "hits": [
+        {
+          "document": "19-injection.txt",
+          "locator": "текст",
+          "score": 0.03278688524590164
+        },
+        {
+          "document": "33-word-01.docx",
+          "locator": "блок 2",
+          "score": 0.026856524873828405
+        },
+        {
+          "document": "34-word-02.docx",
+          "locator": "блок 2",
+          "score": 0.026500526500526502
+        },
+        {
+          "document": "35-word-03.docx",
+          "locator": "блок 2",
+          "score": 0.026153846153846153
+        },
+        {
+          "document": "36-word-04.docx",
+          "locator": "блок 2",
+          "score": 0.02581612258494337
+        },
+        {
+          "document": "37-word-05.docx",
+          "locator": "блок 2",
+          "score": 0.02548701298701299
+        },
+        {
+          "document": "38-word-06.docx",
+          "locator": "блок 2",
+          "score": 0.0251661918328585
+        },
+        {
+          "document": "39-word-07.docx",
+          "locator": "блок 2",
+          "score": 0.02485334979932078
+        }
+      ],
+      "focused_snippets_found": true
+    }
+  ],
+  "api_errors": {
+    "broken.pdf": {
+      "status": "failed",
+      "error": "Ошибка файла: PdfStreamError"
+    },
+    "empty.txt": {
+      "status": "failed",
+      "error": "Не удалось извлечь текст. Проверьте файл и настройки OCR."
+    },
+    "unsupported.exe": {
+      "http": 400,
+      "error": {
+        "error": "Недопустимое имя или формат файла."
+      }
+    },
+    "compare_50": {
+      "http": 400,
+      "error": {
+        "error": "Для сравнения выберите от 2 до 8 документов."
+      }
+    }
+  },
+  "live_generation_tested": false,
+  "index_seconds": 0.0,
+  "documents": 50,
+  "chunks": 1254,
+  "summary": {
+    "retrieval_cases": 24,
+    "complete_source_coverage": 24,
+    "mean_expected_document_recall": 1.0,
+    "median_search_seconds": 0.0732,
+    "max_search_seconds": 2.9006,
+    "db_mib": 18.34,
+    "peak_process_rss_mib": 936.7
+  }
+}

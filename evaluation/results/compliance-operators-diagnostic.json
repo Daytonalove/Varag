@@ -1,0 +1,259 @@
+{
+  "synthetic_only": true,
+  "persistent_user_data_modified": false,
+  "local_checks": [
+    {
+      "id": "different_products",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "same_amount_incompatible_operators",
+      "expected": "nonempty",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_durations",
+      "expected": "nonempty",
+      "observed": [
+        "potential_unresolved_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "different_periods",
+      "expected": "different_scope_no_conflict",
+      "observed": [
+        "different_scope_no_conflict"
+      ],
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-18",
+        "FR-39"
+      ]
+    },
+    {
+      "id": "json_schema_claim_type",
+      "expected": "reject assessment object inside claims",
+      "observed": "rejected",
+      "passed": true,
+      "requirements": [
+        "GC-07",
+        "GC-07a"
+      ]
+    },
+    {
+      "id": "operator_validator",
+      "expected": "deterministic rejection of changed operator",
+      "observed": "rejected",
+      "passed": true,
+      "requirements": [
+        "FR-17",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "unrelated_amendment_validator",
+      "expected": "needs_review or rejection",
+      "observed": "needs_review",
+      "passed": true,
+      "requirements": [
+        "FR-11",
+        "FR-21",
+        "FR-42"
+      ]
+    },
+    {
+      "id": "historical_version_retrieval",
+      "expected": "prior version present for historical date",
+      "observed": {
+        "old_version_present": true
+      },
+      "passed": true,
+      "requirements": [
+        "FR-19",
+        "FR-21"
+      ]
+    },
+    {
+      "id": "metadata_date_validation",
+      "expected": "400 for invalid date",
+      "observed": 400,
+      "passed": true,
+      "requirements": [
+        "FR-09",
+        "FR-10"
+      ]
+    },
+    {
+      "id": "direct_pdf_export",
+      "expected": "application/pdf and PDF signature",
+      "observed": {
+        "status": 200,
+        "mime": "application/pdf"
+      },
+      "passed": true,
+      "requirements": [
+        "TZ-2.1"
+      ]
+    }
+  ],
+  "live_checks": [
+    {
+      "id": "operators",
+      "expected": "potential_unresolved_conflict",
+      "automated_pass": true,
+      "manual_semantic_review_required": true,
+      "answer": "Потенциальное противоречие не разрешено.\n\nЛимит кредитного комитета на сделку — не более 10 млн руб. [1]\n\nПроверка норм по первоисточникам:\n\nНайдены разные значения или несовместимые ограничения одного предмета. Основание выбора не установлено.\n\n«Лимит кредитного комитета на сделку — не более 10 млн руб.» [1]\n\n«Лимит кредитного комитета на сделку — свыше 10 млн руб.» [2]\n",
+      "mode": "gigachat_answer",
+      "verification_status": "potential_unresolved_conflict",
+      "statuses": [
+        "potential_unresolved_conflict"
+      ],
+      "discrepancies": [
+        {
+          "source_block_ids": [
+            "91292f1779127d187253ced9646762d3",
+            "b95e89d00470a0c531ecf3a2b5c322f7"
+          ],
+          "status": "potential_unresolved_conflict",
+          "explanation": "Найдены разные значения или несовместимые ограничения одного предмета. Основание выбора не установлено.",
+          "evidence": [
+            {
+              "block_id": "91292f1779127d187253ced9646762d3",
+              "quote": "Лимит кредитного комитета на сделку — не более 10 млн руб."
+            },
+            {
+              "block_id": "b95e89d00470a0c531ecf3a2b5c322f7",
+              "quote": "Лимит кредитного комитета на сделку — свыше 10 млн руб."
+            }
+          ],
+          "normalized_values": [
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "lte",
+              "exact": "10 млн руб."
+            },
+            {
+              "kind": "money",
+              "value": "1E+7",
+              "unit": "RUB",
+              "operator": "gt",
+              "exact": "10 млн руб."
+            }
+          ],
+          "applicable_fact": null,
+          "method": "deterministic",
+          "amendment": null
+        }
+      ],
+      "warnings": [
+        "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки аудитора.",
+        "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+        "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+        "Применимость норм проверяется по явно указанным датам и основаниям; итоговое суждение принимает аудитор.",
+        "Часть утверждений не прошла смысловую проверку и исключена."
+      ],
+      "source_count": 2,
+      "model_version": "GigaChat-3-Pro:32.4.30.3",
+      "synthetic_model_responses": [
+        "{\n    \"claims\": [\n        {\n            \"text\": \"Лимит кредитного комитета на сделку — не более 10 млн руб.\",\n            \"evidence\": [\n                {\n                    \"block_id\": \"91292f1779127d187253ced9646762d3\",\n                    \"quote\": \"Лимит кредитного комитета на сделку — не более 10 млн руб.\"\n                }\n            ]\n        },\n        {\n            \"text\": \"Лимит кредитного комитета на сделку — свыше 10 млн руб.\",\n            \"evidence\": [\n                {\n                    \"block_id\": \"b95e89d00470a0c531ecf3a2b5c322f7\",\n                    \"quote\": \"Лимит кредитного комитета на сделку — свыше 10 млн руб.\"\n                }\n            ]\n        }\n    ],\n    \"assessments\": [],\n    \"limitations\": []\n}",
+        "{\n    \"judgments\": [\n        {\n            \"index\": 0,\n            \"supported\": true\n        },\n        {\n            \"index\": 1,\n            \"supported\": false\n        }\n    ]\n}"
+      ],
+      "llm_diagnostics": [
+        {
+          "status": "succeeded",
+          "stage": "answer",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 549,
+              "completion_tokens": 307,
+              "total_tokens": 856,
+              "precached_prompt_tokens": 205
+            },
+            "elapsed_ms": 5458,
+            "input_tokens": 1341,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "c6ccf7ddc6a18cd706ae3de18a8c2e034d59e8db69b6af04ac4a8eda2e35df79",
+            "stage": "answer",
+            "prompt_version": "20447fc199e0dc7c5281de2b1cc14d47b34f229c0b9cda3d5e3550942f0f3684",
+            "source_block_ids": [
+              "91292f1779127d187253ced9646762d3",
+              "b95e89d00470a0c531ecf3a2b5c322f7"
+            ],
+            "call_id": "4b63acd8402c4ae2b8c1f2209ea1e0af"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "eb05b2eb078e4d28bd23a20eee29a8e7",
+            "input_tokens": 1341
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "entailment",
+          "metadata": {
+            "model": "GigaChat-3-Pro:32.4.30.3",
+            "usage": {
+              "prompt_tokens": 334,
+              "completion_tokens": 66,
+              "total_tokens": 400,
+              "precached_prompt_tokens": 13
+            },
+            "elapsed_ms": 3435,
+            "input_tokens": 669,
+            "token_count_method": "provider",
+            "context_window_tokens": 32768,
+            "output_reserve": 3000,
+            "schema_version": "63fa982fc85b7c00088a15338eb2c4220d58d23c72b17ec778aafb09addb6117",
+            "stage": "entailment",
+            "prompt_version": "a32d99bef053459b068e497d36b3ff894d6ee3b32484f59c5eabb12195cc6c00",
+            "source_block_ids": [
+              "91292f1779127d187253ced9646762d3",
+              "b95e89d00470a0c531ecf3a2b5c322f7"
+            ],
+            "call_id": "374ddda767b74cadbbce00d546cac26f"
+          }
+        },
+        {
+          "status": "succeeded",
+          "stage": "tokens_count",
+          "metadata": {
+            "call_id": "256708ca9c77418d8b1851f517c81aa0",
+            "input_tokens": 669
+          }
+        }
+      ]
+    }
+  ]
+}

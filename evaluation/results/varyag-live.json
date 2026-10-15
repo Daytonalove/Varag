@@ -1,0 +1,31 @@
+{
+  "synthetic_only": true,
+  "persistent_user_data_modified": false,
+  "job_status": "done",
+  "selected_model": "GigaChat-3-Lightning",
+  "model_version": "GigaChat-3-Lightning:32.4.16.3",
+  "mode": "gigachat_answer",
+  "answer": "Срок подготовки отчёта составляет 7 рабочих дней. [1]",
+  "error": null,
+  "reranker": {
+    "candidates": 1,
+    "elapsed_ms": 12,
+    "model_id": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1@1427fd652930e4ba29e8149678df786c240d8825",
+    "score_type": "relevance_logit",
+    "status": "applied",
+    "windows": 1
+  },
+  "evidence": [
+    {
+      "block_id": "9e32ca97f3e3897ea9e59a782b4d9bca",
+      "quote": "Срок подготовки отчёта составляет 7 рабочих дней."
+    }
+  ],
+  "warnings": [
+    "Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки по оригиналу.",
+    "Отсутствие найденного расхождения не доказывает отсутствие противоречий.",
+    "Claims-индекс выключен; поиск выполняется по полному извлечённому тексту.",
+    "Применимость норм проверяется по явно указанным датам и основаниям; вывод зависит от полноты найденных источников."
+  ],
+  "passed": true
+}
