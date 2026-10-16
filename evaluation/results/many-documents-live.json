@@ -1,0 +1,43 @@
+{
+  "synthetic_only": true,
+  "user_data_modified": false,
+  "uploaded_documents": 50,
+  "live": true,
+  "mode": "gigachat_answer",
+  "answer": "Общее требование – мониторинг обеспечивает наблюдение за состоянием системы, результаты мониторинга фиксируются в журнале. [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48] [49] [50]\n\nПри сбое сигнал направляют дежурному по телефону. [2]\n\nПосле восстановления связи проводят повторную проверку доступности. [1]",
+  "failure": null,
+  "context": {
+    "context_characters": 240000,
+    "context_tokens": 128000,
+    "input_tokens_estimate": 29665,
+    "limit_source": "documented",
+    "max_sources": 64,
+    "model": "GigaChat-2",
+    "output_tokens": 6000,
+    "selected_sources": 50,
+    "source_characters": 6000,
+    "token_count_failure": null,
+    "token_count_method": "provider_components"
+  },
+  "calls": [
+    {
+      "stage": "tokens_count",
+      "status": "succeeded",
+      "usage": {}
+    },
+    {
+      "stage": "fast_answer",
+      "status": "succeeded",
+      "usage": {
+        "prompt_tokens": 26013,
+        "completion_tokens": 746,
+        "total_tokens": 26759,
+        "precached_prompt_tokens": 0
+      }
+    }
+  ],
+  "model_version": "GigaChat-2:2.0.30.01",
+  "passed": true,
+  "selected_documents": 50,
+  "elapsed_seconds": 24.43
+}

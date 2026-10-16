@@ -163,7 +163,10 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
     def provider_models():
         from document_rag.provider import ProviderError
         try:
-            return jsonify(models=service.available_models(), default=service.provider.cfg['model'])
+            from .context import limits
+            models=service.available_models()
+            return jsonify(models=models, default=service.provider.cfg['model'],
+                           limits={m:limits(dict(service.provider.cfg,model=m)) for m in models})
         except ProviderError as exc:
             return jsonify(error=str(exc)), 502
 

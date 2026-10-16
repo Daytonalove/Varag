@@ -42,7 +42,7 @@ class GigaChat:
             raise ProviderError('Нужен Authorization key одной строкой, без префикса Basic.')
         return key
 
-    def request(self, url, headers, data=None):
+    def request(self, url, headers, data=None, *, timeout_seconds=None):
         parts = urllib.parse.urlsplit(url)
         if parts.scheme != 'https' or not parts.hostname or parts.username or parts.password or parts.query or parts.fragment:
             raise ProviderError('API URL должен быть HTTPS без учётных данных и параметров.')
@@ -53,7 +53,8 @@ class GigaChat:
                 tls.load_verify_locations(cafile=self.cfg['ca_file'])
             opener = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=tls))
             req = urllib.request.Request(url, headers=headers, data=data)
-            with opener.open(req, timeout=self.cfg.get('timeout_seconds', 90)) as response:
+            timeout = self.cfg.get('timeout_seconds', 90) if timeout_seconds is None else timeout_seconds
+            with opener.open(req, timeout=timeout) as response:
                 raw = response.read(2_000_001)
             if len(raw) > 2_000_000:
                 raise ProviderError('Слишком большой ответ API.')
@@ -107,7 +108,7 @@ class GigaChat:
             self.cached = (fingerprint, token, expires)
             return token
 
-    def call(self, path, body=None, *, retry_unauthorized=None):
+    def call(self, path, body=None, *, retry_unauthorized=None, timeout_seconds=None):
         retry = self.cfg.get('retry_unauthorized', True) if retry_unauthorized is None else retry_unauthorized
         for attempt in range(2 if retry else 1):
             token = self.token(refresh=bool(attempt))
@@ -115,7 +116,8 @@ class GigaChat:
                 return self.request(self.cfg['base_url'].rstrip('/') + path, {
                     'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json',
                     'Accept': 'application/json', 'User-Agent': 'DocumentRAG-Local/1.0',
-                }, json.dumps(body, ensure_ascii=False).encode() if body is not None else None)
+                }, json.dumps(body, ensure_ascii=False).encode() if body is not None else None,
+                    **({'timeout_seconds':timeout_seconds} if timeout_seconds is not None else {}))
             except ProviderError as exc:
                 if exc.status != 401 or attempt or not retry:
                     raise

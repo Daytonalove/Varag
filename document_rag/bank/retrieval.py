@@ -326,6 +326,12 @@ class Retriever:
                         seen_versions.add(block['document_version_id'])
             for block in ordered[:3]:
                 reserve(block, 'relevance')
+            if getattr(self,'diversify_documents',False):
+                represented=set()
+                for block in ordered:
+                    if block['document_version_id'] not in represented:
+                        reserve(block,'document_coverage')
+                        represented.add(block['document_version_id'])
             if normative:
                 for reason in ('exceptions', 'amendments', 'numeric', 'document_relation'):
                     for block in [b for b in ordered if reason in b['reasons']][:2]:

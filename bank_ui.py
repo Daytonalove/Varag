@@ -155,7 +155,7 @@ try:
         if cache is None or cache['expires'] < time.monotonic():
             try:
                 payload = call('GET', '/provider/models').json()
-                cache = {'models': payload['models'], 'expires': time.monotonic()+60}
+                cache = {'models': payload['models'], 'limits': payload.get('limits',{}), 'expires': time.monotonic()+60}
                 st.session_state['available_models'] = cache
             except (requests.RequestException, ValueError):
                 cache = {'models': [health['model']] if health.get('model') else []}
@@ -165,8 +165,13 @@ try:
         model_key = 'model_'+str(active)
         previous = next((c.get('model_id') for c in chats if (c['project_id'], c.get('conversation_id')) == active), None)
         default = previous or health.get('model')
+        current_model=st.session_state.get(model_key,default)
+        profile=cache.get('limits',{}).get(current_model,{})
+        model_help=(f"Бюджет контекста: {profile['context_tokens']:,} токенов, включая ответ. "
+                    + ('Для этой модели используется консервативный лимит.' if profile.get('limit_source')=='conservative_fallback'
+                       else 'Объём фрагментов подбирается автоматически.')) if profile else None
         model = st.selectbox('Модель', options, index=options.index(default) if default in options else 0,
-                             key=model_key, disabled=not options) if options else None
+                             key=model_key, disabled=not options, help=model_help) if options else None
     if not health.get('gigachat_configured'):
         st.error('Подключение GigaChat не настроено на сервере.')
     if active:

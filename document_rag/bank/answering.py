@@ -185,9 +185,19 @@ class AnswerService:
         if not isinstance(question, str) or not 1 <= len(question.strip()) <= 2000:
             raise ValueError('Вопрос: 1–2000 символов.')
         search_question = _search_query_with_history(question, history)
-        retrieval = self.retriever.search(project, user, search_question, as_of=as_of)
-        sources, manifest = retrieval['sources'], retrieval['coverage_manifest']
         fast_mode=use_llm and hasattr(provider,'analyze') and provider.cfg.get('answer_mode',os.environ.get('RAG_ANSWER_MODE','fast')).strip().lower()=='fast'
+        retriever = self.retriever
+        if fast_mode:
+            from .context import limits
+            policy = limits(provider.cfg)
+            # Request-local limits: concurrent chats/models cannot change each other.
+            retriever = copy.copy(self.retriever)
+            retriever.budget = max(retriever.budget, policy['context_characters']*2)
+            retriever.limit = max(retriever.limit, policy['max_sources']*2)
+            retriever.rerank_limit = max(retriever.rerank_limit, min(512, policy['max_sources']*4))
+            retriever.diversify_documents = True
+        retrieval = retriever.search(project, user, search_question, as_of=as_of)
+        sources, manifest = retrieval['sources'], retrieval['coverage_manifest']
         failure=None
         manifest['retrieved_source_ids']=[s['block_id'] for s in sources]
         discrepancies = ContradictionService().assess(sources, as_of) if retrieval['normative'] else []
@@ -291,6 +301,8 @@ class AnswerService:
             sources = [sent[item['block_id']] for item in sources if item['block_id'] in cited_ids and item['block_id'] in sent]
             manifest['sent_source_ids']=list(sent)
             manifest['verification_level']=semantic['verification_level']
+            if semantic.get('context'):
+                manifest['generation_context']=semantic['context']
         status = 'needs_review' if sources else 'insufficient_evidence'
         if semantic is not None:
             status = ('needs_review' if semantic.get('verification_level') in ('source_ids_only','local_source_checks')

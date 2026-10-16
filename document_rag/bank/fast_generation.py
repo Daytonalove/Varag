@@ -1,4 +1,4 @@
-"""Fast RAG v4: one completion, exact-code quotations and bounded dialogue memory.
+"""Fast RAG v5: one completion, exact-code quotations and bounded dialogue memory.
 
 Local checks bind codes to canonical rows and validate sources and numbers.
 General prose is not semantically verified. RAG_ANSWER_MODE=audit retains audit.
@@ -12,7 +12,7 @@ import time
 
 from document_rag.provider import ProviderError
 
-FAST_RAG_VERSION = 4
+FAST_RAG_VERSION = 5
 
 SYSTEM = """Ты — Варяг, помощник по загруженным документам. Тебе передаются: текущий вопрос, история диалога и фрагменты документов с ID Q1, Q2 и т.д.
 История нужна, чтобы понимать уточнения («проверь заново», «почему?», «ты ошибся»). При повторной проверке верни исправленный ответ на ИСХОДНЫЙ вопрос, а не описание предыдущего ответа. Предыдущие ответы не являются доказательствами и могут быть ошибочны.
@@ -21,7 +21,7 @@ SYSTEM = """Ты — Варяг, помощник по загруженным д
 Для «чем отличается X от Y» укажи различия X и Y; если материал про один объект отсутствует в переданных фрагментах, честно объясни ограничение в limitations. Не выдавай отдельные факты об X за сравнение X с Y.
 Идентификаторы Q1, Q2 — технические ID ЦИТАТ, не имена документов, организаций или объектов; в тексте ответа никогда не называй их субъектами предложений.
 Не делай выводов по обрывкам таблиц (отдельным буквам Т/Н/О или цифрам без заголовков строк и столбцов). Не придумывай содержание отсутствующего документа. Приводи только проверяемые утверждения с source_ids, реально поддерживающими их.
-Верни строго JSON: claims — массив из 0–24 объектов {text, source_ids}; limitations — массив из 0–6 коротких замечаний. Без markdown-оболочки.
+Верни строго JSON: claims — массив из 0–64 объектов {text, source_ids}; limitations — массив из 0–6 коротких замечаний. Без markdown-оболочки.
 Если для ответа доказательств нет, верни claims=[], а причину — в limitations. Никогда не цитируй Q1 внутри text: интерфейс сам поставит [1]."""
 
 
@@ -29,11 +29,11 @@ def _schema(ids):
     return {
         'type': 'object', 'additionalProperties': False,
         'properties': {
-            'claims': {'type': 'array', 'maxItems': 24, 'items': {
+            'claims': {'type': 'array', 'maxItems': 64, 'items': {
                 'type': 'object', 'additionalProperties': False,
                 'properties': {
                     'text': {'type': 'string', 'minLength': 1, 'maxLength': 1600},
-                    'source_ids': {'type': 'array', 'minItems': 1, 'maxItems': 8,
+                    'source_ids': {'type': 'array', 'minItems': 1, 'maxItems': len(ids),
                                    'items': {'type': 'string', 'enum': ids}},
                 }, 'required': ['text', 'source_ids'],
             }},
@@ -48,11 +48,11 @@ def _is_useful(source):
     return bool(re.search(r'[а-яёa-z]{4,}', text, re.I)) and len(text) >= 12
 
 
-def _select_sources(sources, question=''):
+def _select_sources(sources, question='', cfg=None):
     from .structural import codes, rows
-    max_sources = max(1, min(int(os.environ.get('FAST_RAG_MAX_SOURCES', '8')), 24))
-    max_chars = max(2000, min(int(os.environ.get('FAST_RAG_CONTEXT_CHARS', '10000')), 30000))
-    per_source = max(300, min(int(os.environ.get('FAST_RAG_SOURCE_CHARS', '2400')), 6000))
+    from .context import limits
+    policy = limits(cfg or {})
+    max_sources, max_chars, per_source = policy['max_sources'], policy['context_characters'], policy['source_characters']
     requested = codes(question)
     useful = [s for s in sources if _is_useful(s)]
     candidates = []
@@ -61,12 +61,14 @@ def _select_sources(sources, question=''):
     lanes = [[s for s in useful if code in codes(s['text_exact'])] for code in requested]
     for group in zip_longest(*lanes):
         candidates.extend(s for s in group if s is not None)
-    if re.search(r'отлич|сравн|разниц|различи|сопостав', question, re.I):
-        seen_docs=set()
-        for source in useful:
-            doc=source.get('document_version_id', source.get('document_id'))
-            if doc not in seen_docs:
-                candidates.append(source); seen_docs.add(doc)
+    # Preserve the best hit, then represent other retrieved document versions
+    # before spending the remaining budget on repeated passages from one file.
+    candidates.extend(useful[:1])
+    seen_docs=set()
+    for source in useful:
+        doc=source.get('document_version_id', source.get('document_id',source['block_id']))
+        if doc not in seen_docs:
+            candidates.append(source); seen_docs.add(doc)
     candidates.extend(useful)
     chosen, payload, seen, remaining = [], [], set(), max_chars
     for source in candidates:
@@ -132,7 +134,7 @@ def _validate_response(raw, sources):
     if not isinstance(data, dict) or set(data) != {'claims', 'limitations'}:
         raise ValueError('Структура ответа отличается от ожидаемой.')
     claims, limitations = data['claims'], data['limitations']
-    if not isinstance(claims, list) or len(claims) > 24 or not isinstance(limitations, list) or len(limitations) > 6:
+    if not isinstance(claims, list) or len(claims) > 64 or not isinstance(limitations, list) or len(limitations) > 6:
         raise ValueError('Некорректное число утверждений или ограничений.')
     if not all(isinstance(s, str) and len(s) <= 500 for s in limitations):
         raise ValueError('Некорректные ограничения ответа.')
@@ -144,7 +146,7 @@ def _validate_response(raw, sources):
         statement, ids = claim['text'], claim['source_ids']
         if not isinstance(statement, str) or not 1 <= len(statement.strip()) <= 1600:
             raise ValueError('Пустое или слишком длинное утверждение.')
-        if not isinstance(ids, list) or not 1 <= len(ids) <= 8 or any(not isinstance(i, str) or i not in registry for i in ids):
+        if not isinstance(ids, list) or not 1 <= len(ids) <= len(registry) or any(not isinstance(i, str) or i not in registry for i in ids):
             raise ValueError('В ответе отсутствует источник или указан выдуманный ID.')
         ids = list(dict.fromkeys(ids))
         result.append({
@@ -232,7 +234,7 @@ def _expected_enumeration_count(question):
         return None
     token = match.group(1).lower()
     count = int(token) if token.isdigit() else words.get(token)
-    return count if count is not None and 1 <= count <= 24 else None
+    return count if count is not None and 1 <= count <= 64 else None
 
 
 def analyze_fast(provider, question, sources, *, as_of=None, history=None,
@@ -241,7 +243,9 @@ def analyze_fast(provider, question, sources, *, as_of=None, history=None,
     reference_question = question
     from .answering import _search_query_with_history
     reference_question = _search_query_with_history(question, history)
-    chosen, source_payload = _select_sources(sources, reference_question)
+    from .context import limits, pack_context
+    policy = limits(provider.cfg)
+    chosen, source_payload = _select_sources(sources, reference_question, provider.cfg)
     if not chosen:
         return dict(claims=[], assessments=[], limitations=['В выдаче не найдено содержательных фрагментов: нужны более качественные исходные данные или другой вопрос.'],
                     errors=[], examined_block_ids=[], calls=[], model=provider.cfg['model'],
@@ -277,25 +281,15 @@ def analyze_fast(provider, question, sources, *, as_of=None, history=None,
     }
     body = {
         'model': provider.cfg['model'], 'temperature': 0, 'stream': False,
-        'max_tokens': max(400, min(int(os.environ.get('FAST_RAG_OUTPUT_TOKENS', '2500')), 3000)),
+        'max_tokens': policy['output_tokens'],
         'response_format': {'type': 'json_schema', 'schema': _schema(ids), 'strict': True},
         'messages': [
             {'role': 'system', 'content': SYSTEM},
             {'role': 'user', 'content': json.dumps(payload, ensure_ascii=False)},
         ],
     }
-    # UTF-8 bytes bound tokens conservatively without an extra provider call.
-    # Include schema, history and framing, not just source character counts.
-    window=int(provider.cfg.get('context_window_tokens',32768))
-    token_bound=len(json.dumps(body,ensure_ascii=False).encode('utf-8'))+256
-    while token_bound+body['max_tokens']>window and len(chosen)>1:
-        chosen.pop(); source_payload.pop()
-        payload['sources']=source_payload
-        body['response_format']['schema']=_schema([s['source_id'] for s in source_payload])
-        body['messages'][1]['content']=json.dumps(payload,ensure_ascii=False)
-        token_bound=len(json.dumps(body,ensure_ascii=False).encode('utf-8'))+256
-    if token_bound+body['max_tokens']>window:
-        raise ProviderError('Контекст вопроса превышает бюджет модели. Уточните вопрос.',422,'context_budget')
+    context = pack_context(provider, body, payload, chosen, _schema, policy,
+                           before_call=before_call, history=history, record_call=record_call)
     before_call(chosen, history or [])
 
     block_ids = [s['block_id'] for s in chosen]
@@ -317,6 +311,10 @@ def analyze_fast(provider, question, sources, *, as_of=None, history=None,
         claims, limitations = _validate_response(choice['message']['content'], chosen)
         claims, checks = _guard_claims(claims, chosen, reference_question)
         limitations.extend(checks)
+        all_documents = {s.get('document_id') for s in sources if s.get('document_id')}
+        sent_documents = set(context['selected_document_ids'])
+        if all_documents - sent_documents:
+            limitations.append(f'В контекст ответа вошли фрагменты из {len(sent_documents)} из {len(all_documents)} документов поисковой выдачи; ответ не охватывает все найденные документы.')
         expected = _expected_enumeration_count(reference_question)
         if expected is not None and len(claims) < expected:
             limitations.append(
@@ -332,7 +330,7 @@ def analyze_fast(provider, question, sources, *, as_of=None, history=None,
             'source_block_ids': block_ids,
             'finish_reason': choice.get('finish_reason'),
             'verification_level': 'local_source_checks',
-            'input_token_upper_bound': token_bound, 'context_budget_tokens': window,
+            'context': context, 'context_budget_tokens': policy['context_tokens'],
             'sent_sources': [{'block_id':s['block_id'],'sha256':s['llm_text_sha256'],'range':s['llm_excerpt_range']} for s in chosen],
             'fast_rag_version': FAST_RAG_VERSION,
         }
@@ -344,6 +342,7 @@ def analyze_fast(provider, question, sources, *, as_of=None, history=None,
             'errors': [], 'examined_block_ids': block_ids, 'calls': [meta],
             'model': selected_model, 'verification_level': 'local_source_checks',
             'sent_sources': chosen,
+            'context': context,
         }
     except ProviderError as exc:
         provider.failures += 1

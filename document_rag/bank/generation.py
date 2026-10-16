@@ -191,7 +191,8 @@ class GigaChatRAG(GigaChatEvidence):
                                 before_call=before_call, record_call=record_call)
         calls, deadline, metadata = 0, time.monotonic() + 180, []
         consumed_tokens=0
-        window = int(self.cfg.get('context_window_tokens', 32768))
+        from .context import limits
+        window = limits(self.cfg)['context_tokens']
         output_tokens = int(self.cfg.get('max_output_tokens', 3000))
 
         def request_json(stage, system, schema, payload, selected, validator):
