@@ -127,6 +127,34 @@ class BankUITests(unittest.TestCase):
         with self.assertRaises(NotFound):
             self.service.ask(self.project,'other','Мониторинг?',True)
 
+    def test_delete_chat_is_user_scoped_and_keeps_other_chats_and_documents(self):
+        document = self.add_document()
+        with self.store.connect() as conn:
+            for chat, user in [('first', 'local-auditor'), ('second', 'local-auditor'), ('foreign', 'other')]:
+                conn.execute('INSERT INTO conversations(id,project_id,user_id,title) VALUES(?,?,?,?)',
+                             (chat, self.project, user, chat))
+        path = f'/api/v1/chats/{self.project}/first'
+        self.assertEqual(self.client.delete(path, headers={'X-RAG-Token': 'other'}).status_code, 404)
+        self.assertEqual(self.client.delete(f'/api/v1/chats/{self.project}/foreign', headers=self.headers).status_code, 404)
+        self.assertEqual(self.client.delete(path, headers=self.headers).status_code, 200)
+        self.assertEqual(self.client.delete(path, headers=self.headers).status_code, 200)
+        chats = self.client.get('/api/v1/chats', headers=self.headers).json
+        self.assertEqual([c['conversation_id'] for c in chats], ['second'])
+        self.assertEqual(self.store.documents(self.project, 'local-auditor')[0]['id'], document)
+        self.client.delete(f'/api/v1/chats/{self.project}/second', headers=self.headers)
+        self.assertEqual(self.client.get('/api/v1/chats', headers=self.headers).json, [])
 
-if __name__=='__main__':
+    def test_delete_last_empty_chat_in_sidebar(self):
+        with patch.dict(os.environ, {'BANK_DATABASE': str(self.database), 'BANK_API_URL': 'http://127.0.0.1:8766'}), patch('requests.request', side_effect=self.request):
+            ui = AppTest.from_file(str(ROOT / 'bank_ui.py'), default_timeout=20).run()
+            next(b for b in ui.button if (b.key or '').startswith('delete_chat_')).click().run()
+            self.assertEqual(len(ui.exception), 0)
+            self.assertFalse(any(b.label == 'Мои документы' for b in ui.button))
+            self.assertEqual(self.client.get('/api/v1/chats', headers=self.headers).json, [])
+            next(b for b in ui.button if b.label == '＋ Новый чат').click().run()
+            self.assertEqual(len(ui.exception), 0)
+            self.assertEqual(len(self.client.get('/api/v1/chats', headers=self.headers).json), 1)
+
+
+if __name__ == '__main__':
     unittest.main()

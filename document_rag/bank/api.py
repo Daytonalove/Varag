@@ -187,7 +187,26 @@ def create_app(store=None, tokens=None, start_worker=True, service=None, demo_mo
                                         (project['id'],g.user)).fetchone()
                     result.append(dict(project_id=project['id'],conversation_id='legacy' if legacy else None,
                                        title=project['name'],model_id=None,created=project['created']))
+        with store.connect() as conn:
+            deleted = {(r['project_id'], r['conversation_id']) for r in conn.execute(
+                'SELECT project_id,conversation_id FROM deleted_chats WHERE user_id=?', (g.user,))}
+        result = [r for r in result if (r['project_id'], r.get('conversation_id') or '') not in deleted]
         return jsonify(sorted(result,key=lambda row:row['created'],reverse=True))
+
+    @app.delete('/api/v1/chats/<project>/<conversation>')
+    def delete_chat(project, conversation):
+        key = '' if conversation == 'empty' else conversation
+        with store.connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            store.project_access(conn, project, g.user)
+            if key not in ('', 'legacy') and not conn.execute(
+                    'SELECT 1 FROM conversations WHERE id=? AND project_id=? AND user_id=?',
+                    (key, project, g.user)).fetchone():
+                raise NotFound()
+            conn.execute('INSERT OR IGNORE INTO deleted_chats(project_id,user_id,conversation_id) VALUES(?,?,?)',
+                         (project, g.user, key))
+            store.event(conn, project, g.user, 'chat.deleted', key or project)
+        return jsonify(deleted=True)
 
     @app.post('/api/v1/chats')
     def new_chat():

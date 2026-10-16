@@ -107,3 +107,12 @@ CREATE INDEX IF NOT EXISTS structural_lookup ON structural_keys(version_id,code,
 CREATE TABLE IF NOT EXISTS page_layouts(
  version_id TEXT NOT NULL, page_index INTEGER NOT NULL, data TEXT NOT NULL,
  PRIMARY KEY(version_id,page_index));
+
+-- User-scoped soft deletion: shared project documents are never removed with a chat.
+CREATE TABLE IF NOT EXISTS deleted_chats(
+    project_id TEXT NOT NULL REFERENCES projects(id),
+    user_id TEXT NOT NULL,
+    conversation_id TEXT NOT NULL,
+    deleted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(project_id,user_id,conversation_id)
+);

@@ -147,10 +147,21 @@ try:
             active = st.session_state['active_chat']
         for chat in chats:
             selected = active == (chat['project_id'], chat.get('conversation_id'))
-            if st.button(chat['title'], key='chat_'+chat['project_id']+'_'+str(chat.get('conversation_id')),
-                         type='primary' if selected else 'secondary', use_container_width=True):
-                select_chat(chat)
-                st.rerun()
+            chat_key = chat['project_id']+'_'+str(chat.get('conversation_id'))
+            name_column, delete_column = st.columns([5, 1])
+            with name_column:
+                if st.button(chat['title'], key='chat_'+chat_key,
+                             type='primary' if selected else 'secondary', use_container_width=True):
+                    select_chat(chat)
+                    st.rerun()
+            with delete_column:
+                if st.button('🗑', key='delete_chat_'+chat_key, help='Удалить чат из списка', use_container_width=True):
+                    conversation = chat.get('conversation_id') or 'empty'
+                    call('DELETE', f"/chats/{chat['project_id']}/{conversation}")
+                    if selected:
+                        st.session_state.pop('active_chat', None)
+                        st.session_state.pop('source_view', None)
+                    st.rerun()
     title, picker = st.columns([3, 2], vertical_alignment='center')
     with title:
         st.title('Варяг')
