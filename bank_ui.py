@@ -41,10 +41,13 @@ def select_chat(chat):
 
 
 def show_answer(answer):
-    st.markdown(answer['answer_text'])
     if answer.get('mode') == 'gigachat_failed':
-        st.error('GigaChat не смог завершить ответ. Попробуйте задать вопрос ещё раз.')
-    elif 'llm_analysis_incomplete' in answer.get('coverage_manifest',{}).get('limitations',[]):
+        st.error((answer.get('failure') or {}).get('message') or answer['answer_text'])
+    else:
+        st.markdown(answer['answer_text'])
+    for limitation in answer.get('answer_limitations',[]) if answer.get('claims') else []:
+        st.warning(limitation)
+    if 'llm_analysis_incomplete' in answer.get('coverage_manifest',{}).get('limitations',[]):
         st.warning('Часть найденных фрагментов не удалось проверить. Ответ может быть неполным.')
     if answer.get('sources'):
         with st.expander('Источники'):

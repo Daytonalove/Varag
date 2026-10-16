@@ -116,8 +116,8 @@ def live_checks(selected_cases=None, diagnose=False):
                 continue
             captured=[]
             real_call=provider.call
-            def capture(path,body=None):
-                response=real_call(path,body)
+            def capture(path,body=None,**kwargs):
+                response=real_call(path,body,**kwargs)
                 if diagnose and path=='/chat/completions':
                     captured.append(response['choices'][0]['message']['content'])
                 return response

@@ -1,0 +1,34 @@
+{
+  "synthetic_only": true,
+  "scope": "GIGACHAT_API_PERS",
+  "requested_model": "GigaChat-2",
+  "tls_verification": true,
+  "oauth": true,
+  "model_available": true,
+  "structured_answer_validated": true,
+  "workspace_e2e": {
+    "documents": 3,
+    "retrieval": "hybrid",
+    "answers": 2,
+    "reranker": {
+      "candidates": 10,
+      "elapsed_ms": 31,
+      "model_id": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1@1427fd652930e4ba29e8149678df786c240d8825",
+      "score_type": "relevance_logit",
+      "status": "applied",
+      "windows": 10
+    },
+    "search_api": true,
+    "generated_claims": [
+      2,
+      1
+    ],
+    "first_status": "needs_review",
+    "followup_answered": true,
+    "async_jobs": true,
+    "llm_attempts_recorded": 2,
+    "model_version": "GigaChat-2:2.0.30.01",
+    "synthetic_only": true,
+    "persistent_user_data_modified": false
+  }
+}

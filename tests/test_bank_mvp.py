@@ -37,7 +37,7 @@ class GenerationTests(unittest.TestCase):
         constructor.assert_called_once_with('models/local')
 
     def test_real_adapter_uses_generation_and_separate_verifier(self):
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         sources = [source()]
         callbacks = []
         with patch.object(provider, 'call', side_effect=[response(analysis(sources)), response({'judgments': [{'index': 0, 'supported': True}]})]) as call:
@@ -48,7 +48,7 @@ class GenerationTests(unittest.TestCase):
         self.assertEqual(call.call_count, 2)
 
     def test_verifier_rejects_unsupported_paraphrase(self):
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         data = analysis([source()])
         data['claims'][0]['text'] = 'Кредитный комитет не имеет полномочий.'
         with patch.object(provider, 'call', side_effect=[response(data), response({'judgments': [{'index': 0, 'supported': False}]})]):
@@ -57,7 +57,7 @@ class GenerationTests(unittest.TestCase):
         self.assertTrue(result['errors'])
 
     def test_missing_assessment_judgment_does_not_discard_supported_fact(self):
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         data = analysis([source()])
         data['assessments'] = [{'status': 'needs_review', 'explanation': 'Область применения требует уточнения.', 'evidence': data['claims'][0]['evidence']}]
         with patch.object(provider, 'call', side_effect=[response(data), response({'judgments': [{'index': 0, 'supported': True}]})]):
@@ -90,7 +90,7 @@ class GenerationTests(unittest.TestCase):
 
     def test_422_splits_and_preserves_ids(self):
         sources = [source(), source('b2', 'Лимит кредитного комитета составляет 15 млн руб.')]
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         with patch.object(provider, 'call', side_effect=[ProviderError('large', 422), response(analysis(sources[:1])),
              response(analysis(sources[1:])), response({'judgments': [{'index': 0, 'supported': True}, {'index': 1, 'supported': True}]})]):
             result = provider.analyze('Лимиты?', sources)
@@ -98,7 +98,7 @@ class GenerationTests(unittest.TestCase):
         self.assertEqual(len(result['examined_block_ids']), 2)
 
     def test_422_single_block_is_reported_not_success(self):
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         with patch.object(provider, 'call', side_effect=ProviderError('large', 422)):
             result = provider.analyze('Лимит?', [source()])
         self.assertEqual(result['claims'], [])
@@ -106,7 +106,7 @@ class GenerationTests(unittest.TestCase):
         self.assertTrue(result['errors'])
 
     def test_permission_revocation_before_verification_stops_call(self):
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         checks = 0
         def permission(*args):
             nonlocal checks
@@ -212,7 +212,7 @@ class MVPTests(unittest.TestCase):
     def test_semantic_service_saves_answer_and_attempt_metadata(self):
         with self.store.connect() as conn:
             conn.execute('UPDATE documents SET external_allowed=1')
-        provider = GigaChatRAG({'model': 'test-model'})
+        provider = GigaChatRAG({'answer_mode':'audit','model': 'test-model'})
         sources = Retriever(self.store).search(self.project, 'alice', 'Лимит?')['sources']
         with patch.object(provider, 'call', side_effect=[response(analysis(sources)), response({'judgments': [{'index': 0, 'supported': True}]})]):
             answer = AnswerService(self.store, provider, True).ask(self.project, 'alice', 'Какой лимит?', True)

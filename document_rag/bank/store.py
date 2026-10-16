@@ -40,7 +40,10 @@ class Store:
             if 'model_id' not in {row['name'] for row in conn.execute('PRAGMA table_info(question_jobs)')}:
                 conn.execute('ALTER TABLE question_jobs ADD COLUMN model_id TEXT')
             conn.execute('INSERT OR IGNORE INTO schema_versions VALUES(6)')
+            conn.execute('INSERT OR IGNORE INTO schema_versions VALUES(7)')
             from .norms import VERSION
+            from .structural import indexed_version
+            VERSION = indexed_version(VERSION)
             changed=set()
             for row in conn.execute('''SELECT DISTINCT b.version_id,d.project_id FROM blocks b
                 JOIN versions v ON v.id=b.version_id JOIN documents d ON d.id=v.document_id
@@ -210,6 +213,8 @@ class Store:
                 self.document_access(conn, job['document_id'], job['user_id'], True)
                 # Atomic publish makes retries safe; no partial canonical state is committed.
                 for page in pages:
+                    if page.get('layout_data'):
+                        conn.execute('INSERT OR REPLACE INTO page_layouts VALUES(?,?,?)',(job['version_id'],page['page_index'],encoded(page['layout_data'])))
                     conn.execute('INSERT OR IGNORE INTO pages VALUES(?,?,?,?,?,?)',
                                  (job['version_id'], page['page_index'], page['page_number'], page['text_exact'],
                                   page['extraction_method'], encoded(page['quality_flags'])))

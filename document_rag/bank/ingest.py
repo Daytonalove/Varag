@@ -13,7 +13,7 @@ from typing import Protocol
 
 from document_rag.extraction import ocr_image
 
-PARSER_VERSION = 'bank-structure-2-layout'
+PARSER_VERSION = 'bank-structure-3-table-geometry'
 SUPPORTED = {'.pdf', '.png', '.jpg', '.jpeg', '.tif', '.tiff', '.txt', '.md'}
 
 
@@ -83,10 +83,12 @@ def extract_pages(path, ocr=None, on_stage=lambda stage: None):
                 pass
         for index, page in enumerate(reader.pages):
             text, method, flags, regions = '', 'pdf_text', [], []
+            layout_data={}
             try:
                 text = page.extract_text() or ''
                 if index < len(layouts) and layouts[index]['text_exact'].strip():
                     text, regions = layouts[index]['text_exact'], layouts[index]['regions']
+                    layout_data=layouts[index]
                 usable = sum(c.isalnum() for c in text) >= 25 and text.count('\ufffd') < 3
                 if not usable:
                     on_stage('ocr')
@@ -102,6 +104,7 @@ def extract_pages(path, ocr=None, on_stage=lambda stage: None):
                             from .layout import ocr_layout
                             layout = ocr_layout(prefix.with_suffix('.png'))
                             text,regions = layout['text_exact'],layout['regions']
+                            layout_data=layout
                         else:
                             text = ocr.recognize(prefix.with_suffix('.png'))
             except Exception:
@@ -115,7 +118,7 @@ def extract_pages(path, ocr=None, on_stage=lambda stage: None):
                 flags.append('coordinates_unavailable')
             # Physical page number; printed pagination is not guessed.
             pages.append(dict(page_index=index, page_number=str(index + 1), text_exact=text,
-                              extraction_method=method, quality_flags=sorted(set(flags)), regions=regions))
+                              extraction_method=method, quality_flags=sorted(set(flags)), regions=regions,layout_data=layout_data))
             on_stage('progress:'+str(index+1)+'/'+str(len(reader.pages)))
         return pages
     from PIL import Image, ImageSequence
@@ -126,6 +129,7 @@ def extract_pages(path, ocr=None, on_stage=lambda stage: None):
             if index >= 500:
                 raise ValueError('Максимум 500 кадров изображения.')
             text, flags, regions = '', ['ocr_unverified', 'layout_unverified'], []
+            layout_data={}
             try:
                 with tempfile.TemporaryDirectory() as temp:
                     image = Path(temp) / 'page.png'
@@ -134,6 +138,7 @@ def extract_pages(path, ocr=None, on_stage=lambda stage: None):
                         from .layout import ocr_layout
                         layout = ocr_layout(image)
                         text,regions = layout['text_exact'],layout['regions']
+                        layout_data=layout
                     else:
                         text = ocr.recognize(image)
             except Exception:
@@ -141,7 +146,7 @@ def extract_pages(path, ocr=None, on_stage=lambda stage: None):
             if not text.strip():
                 flags.append('unreadable')
             pages.append(dict(page_index=index, page_number=str(index + 1), text_exact=text,
-                              extraction_method='tesseract', quality_flags=flags,regions=regions))
+                              extraction_method='tesseract', quality_flags=flags,regions=regions,layout_data=layout_data))
             on_stage('progress:'+str(index+1)+'/'+str(original.n_frames))
     return pages
 

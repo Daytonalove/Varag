@@ -1,0 +1,179 @@
+{
+  "synthetic_only": true,
+  "independent_acceptance": false,
+  "cases": [
+    {
+      "question": "Найди КЗД.7 и ОПС.12",
+      "expected_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "found_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "seconds": 0.084,
+      "passed": true,
+      "answer": "КЗД.7 Защита архивных копий шифрованием. [2]\n\nКЗД.7 Проверка восстановления архивов. [3]\n\nОПС.12 Разделение прав операторов. [1]",
+      "mode": "gigachat_answer",
+      "model": "GigaChat-2:2.0.30.01",
+      "completion_calls": 1,
+      "usage": [
+        {
+          "prompt_tokens": 1238,
+          "completion_tokens": 156,
+          "total_tokens": 1394,
+          "precached_prompt_tokens": 0
+        }
+      ]
+    },
+    {
+      "question": "Найди НКЛ.4",
+      "expected_codes": [
+        "НКЛ.4"
+      ],
+      "found_codes": [
+        "НКЛ.4"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "seconds": 0.06,
+      "passed": true,
+      "answer": "НКЛ.4 Уведомление о смене ключей. [1]",
+      "mode": "gigachat_answer",
+      "model": "GigaChat-2:2.0.30.01",
+      "completion_calls": 1,
+      "usage": [
+        {
+          "prompt_tokens": 1230,
+          "completion_tokens": 68,
+          "total_tokens": 1298,
+          "precached_prompt_tokens": 0
+        }
+      ]
+    },
+    {
+      "question": "Найди КЗД.999",
+      "expected_codes": [],
+      "found_codes": [],
+      "retrieval_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "ОПС.120"
+      ],
+      "seconds": 0.096,
+      "passed": true,
+      "answer": "Не удалось установить ответ по найденным источникам. Не найдено определение или описание КЗД.999 в предоставленных источниках.",
+      "mode": "gigachat_answer",
+      "model": "GigaChat-2:2.0.30.01",
+      "completion_calls": 1,
+      "usage": [
+        {
+          "prompt_tokens": 885,
+          "completion_tokens": 40,
+          "total_tokens": 925,
+          "precached_prompt_tokens": 365
+        }
+      ]
+    },
+    {
+      "question": "ГОСТ 20210.1: КЗД.7",
+      "expected_codes": [
+        "КЗД.7"
+      ],
+      "found_codes": [
+        "КЗД.7"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "seconds": 0.034,
+      "passed": true,
+      "answer": "КЗД.7 Защита архивных копий шифрованием. [1]",
+      "mode": "gigachat_answer",
+      "model": "GigaChat-2:2.0.30.01",
+      "completion_calls": 1,
+      "usage": [
+        {
+          "prompt_tokens": 679,
+          "completion_tokens": 66,
+          "total_tokens": 745,
+          "precached_prompt_tokens": 0
+        }
+      ]
+    },
+    {
+      "question": "ГОСТ 20210.2: КЗД.7",
+      "expected_codes": [
+        "КЗД.7"
+      ],
+      "found_codes": [
+        "КЗД.7"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "НКЛ.4"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "НКЛ.4"
+      ],
+      "seconds": 0.034,
+      "passed": true,
+      "answer": "КЗД.7 Проверка восстановления архивов. [1]",
+      "mode": "gigachat_answer",
+      "model": "GigaChat-2:2.0.30.01",
+      "completion_calls": 1,
+      "usage": [
+        {
+          "prompt_tokens": 312,
+          "completion_tokens": 62,
+          "total_tokens": 374,
+          "precached_prompt_tokens": 365
+        }
+      ]
+    }
+  ],
+  "reranker_max_input_tokens": 381,
+  "reranker_input_limit": 384,
+  "encoder_max_input_tokens": 504,
+  "encoder_input_limit": 512,
+  "passed": true
+}

@@ -30,11 +30,40 @@ class Encoder:
         self.model = SentenceTransformer(directory, device='cpu', local_files_only=True, trust_remote_code=False)
 
     def encode(self, texts, query=False):
-        values = [('query: ' if query else 'passage: ') + text for text in texts]
-        ids = self.model.tokenizer(values, truncation=False)['input_ids']
-        if any(len(row) > self.model.max_seq_length for row in ids):
-            raise ValueError('Превышен лимит модели поиска. Сократите вопрос или размер фрагментов и переиндексируйте базу.')
-        return self.model.encode(values, normalize_embeddings=True, batch_size=8, show_progress_bar=False).tolist()
+        import numpy as np
+        prefix='query: ' if query else 'passage: '
+        tokenizer=self.model.tokenizer
+        limit=self.model.max_seq_length
+        values,owners=[],[]
+        for owner,text in enumerate(texts):
+            value=prefix+text
+            ids=tokenizer(value,truncation=False,verbose=False)['input_ids']
+            if len(ids)<=limit:
+                values.append(value);owners.append(owner)
+                continue
+            offsets=tokenizer(text,add_special_tokens=False,return_offsets_mapping=True,verbose=False)['offset_mapping']
+            width=limit-len(tokenizer(prefix,verbose=False)['input_ids'])-8
+            start=0
+            while start<len(offsets):
+                end=min(start+width,len(offsets))
+                while end>start:
+                    segment=prefix+text[offsets[start][0]:offsets[end-1][1]]
+                    if len(tokenizer(segment,verbose=False)['input_ids'])<=limit:
+                        break
+                    end-=1
+                if end==start:
+                    raise ValueError('Не удалось разбить текст по лимиту локальной модели.')
+                values.append(segment);owners.append(owner)
+                if end==len(offsets):break
+                start=max(start+1,end-32)
+        if not values:return []
+        vectors=self.model.encode(values, normalize_embeddings=True, batch_size=8, show_progress_bar=False)
+        result=[]
+        for owner in range(len(texts)):
+            vector=np.mean([v for i,v in zip(owners,vectors) if i==owner],axis=0)
+            norm=np.linalg.norm(vector)
+            result.append((vector/norm if norm else vector).tolist())
+        return result
 
 
 class Engine:

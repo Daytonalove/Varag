@@ -32,8 +32,8 @@ def main():
     synthetic_response = {}
     synthetic_responses = []
     original_call = provider.call
-    def capture(path, body=None):
-        result = original_call(path, body)
+    def capture(path, body=None, **kwargs):
+        result = original_call(path, body, **kwargs)
         if path == '/chat/completions':
             synthetic_response.update(choices=result.get('choices'), model=result.get('model'))
             if args.diagnose_synthetic:

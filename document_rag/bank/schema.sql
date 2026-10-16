@@ -96,3 +96,14 @@ CREATE TABLE IF NOT EXISTS block_links(version_id TEXT,block_id TEXT,target_id T
 CREATE TABLE IF NOT EXISTS processing_progress(version_id TEXT PRIMARY KEY,completed INTEGER,total INTEGER);
 INSERT OR IGNORE INTO schema_versions VALUES(5);
 CREATE TABLE IF NOT EXISTS derived_versions(version_id TEXT PRIMARY KEY,normalizer_version TEXT,claims_enabled INTEGER);
+
+CREATE TABLE IF NOT EXISTS structural_keys(
+ version_id TEXT NOT NULL, block_id TEXT NOT NULL, code TEXT NOT NULL,
+ page_index INTEGER NOT NULL, start INTEGER NOT NULL, end INTEGER NOT NULL,
+ definition INTEGER NOT NULL, raw TEXT NOT NULL,
+ PRIMARY KEY(version_id,block_id,code,start));
+CREATE INDEX IF NOT EXISTS structural_lookup ON structural_keys(version_id,code,definition);
+
+CREATE TABLE IF NOT EXISTS page_layouts(
+ version_id TEXT NOT NULL, page_index INTEGER NOT NULL, data TEXT NOT NULL,
+ PRIMARY KEY(version_id,page_index));

@@ -115,18 +115,40 @@ class Retriever:
             manifest['retrieval_passes'] += ['exact_index', 'document_relations']
             if self.store.claims_enabled:
                 manifest['retrieval_passes'].append('claims_index')
+            from .structural import codes, query_pages, standards
+            requested_codes, requested_pages = codes(question), query_pages(question)
+            requested_standards = standards(question) if re.search('гост|стандарт',question,re.I) else []
+            manifest['structural_query'] = dict(codes=requested_codes,pages=requested_pages,standards=requested_standards)
+            manifest['retrieval_passes'].append('structural_keys')
             all_hits = []
             for doc in ready:
                 if doc['id'] not in manifest['searched_document_ids']:
                     manifest['searched_document_ids'].append(doc['id'])
                 manifest['searched_version_ids'].append(doc['active_version_id'])
                 rows = [dict(r) for r in conn.execute('SELECT * FROM blocks WHERE version_id=? ORDER BY ordinal', (doc['active_version_id'],))]
+                identity = doc['name']+' '+json.dumps(doc['metadata'],ensure_ascii=False)+' '+''.join(b['text_exact'] for b in rows if b['page_index']==0)[:1500]
+                available_standards=standards(identity)
+                if requested_standards and not any(a==s or a.startswith(s+'-') for s in requested_standards for a in available_standards):
+                    continue
+                if requested_pages:
+                    rows = [b for b in rows if b['page_index']+1 in requested_pages]
                 by_id = {b['id']: b for b in rows}
+                page_layouts={r['page_index']:json.loads(r['data']) for r in conn.execute('SELECT * FROM page_layouts WHERE version_id=?',(doc['active_version_id'],))}
                 reasons = defaultdict(set)
+                code_spans = defaultdict(list)
+                for code in requested_codes:
+                    for hit in conn.execute('SELECT * FROM structural_keys WHERE version_id=? AND code=? ORDER BY definition DESC,start', (doc['active_version_id'],code)):
+                        if hit['block_id'] in by_id:
+                            code_spans[hit['block_id']].append(dict(hit))
+                            reasons[hit['block_id']].add('exact_code')
+                if requested_pages:
+                    for b in rows:
+                        reasons[b['id']].add('exact_page')
                 for kind, value, unit in exact:
                     for row in conn.execute('SELECT block_id FROM exact_terms WHERE version_id=? AND kind=? AND value=? AND unit=?',
                                             (doc['active_version_id'], kind, value, unit)):
-                        reasons[row[0]].add('exact_index')
+                        if row[0] in by_id:
+                            reasons[row[0]].add('exact_index')
                 for relation in document_relations:
                     if relation['source_document_id'] == doc['id'] and relation['source_block_id'] in by_id:
                         reasons[relation['source_block_id']].add('document_relation')
@@ -160,14 +182,16 @@ class Retriever:
                         if len(ranked) > 8:
                             manifest['limitations'].append('semantic_per_document_limit:' + doc['id'])
                         for block_id in ranked[:8]:
-                            reasons[block_id].add('semantic')
+                            if block_id in by_id:
+                                reasons[block_id].add('semantic')
                 if query_terms:
                     expression = ' OR '.join('"' + t + '"*' for t in query_terms)
                     lexical = conn.execute('SELECT block_id,bm25(block_fts) rank FROM block_fts WHERE block_fts MATCH ? AND version_id=? ORDER BY rank',
                                            (expression, doc['active_version_id']))
                     for row in lexical:
-                        reasons[row['block_id']].add('lexical')
-                        lexical_scores[row['block_id']] = row['rank']
+                        if row['block_id'] in by_id:
+                            reasons[row['block_id']].add('lexical')
+                            lexical_scores[row['block_id']] = row['rank']
                 for block in rows:
                     text = block['text_normalized']
                     values = {(a['value'], a['currency']) for a in amounts(text)}
@@ -205,6 +229,8 @@ class Retriever:
                         continue
                     hits.append(dict(b, block_id=block_id, document_id=doc['id'], document_name=doc['name'],
                                      document_version_id=doc['active_version_id'], reasons=sorted(paths), score=0,
+                                     structural_matches=code_spans[block_id],
+                                     table_rows=[r for r in page_layouts.get(b['page_index'],{}).get('tables',[]) if r['code'] in codes(b['text_exact'])],
                                      document_metadata=doc['metadata'],
                                      document_relations=[r for r in document_relations if r['source_document_id']==doc['id'] or r['target_document_id']==doc['id']],
                                      related_block_ids=sorted(relations[block_id]),
@@ -235,7 +261,10 @@ class Retriever:
             if self.reranker and ordered:
                 # Each independent route receives candidates before the shared cap.
                 lanes = [[b for b in ordered if reason in b['reasons']] for reason in
-                         ('semantic', 'lexical', 'numeric', 'exact_index', 'document_relation', 'claims_index', 'alternatives', 'exceptions', 'amendments', 'cross_reference')]
+                         ('exact_code', 'exact_page', 'semantic', 'lexical', 'numeric', 'exact_index', 'document_relation', 'claims_index', 'alternatives', 'exceptions', 'amendments', 'cross_reference')]
+                # Each requested key gets a protected lane, even if reranking
+                # would otherwise prefer a semantically similar but wrong row.
+                lanes = [[b for b in ordered if any(m['code']==code for m in b['structural_matches'])] for code in requested_codes] + lanes
                 doc_best = {}
                 for block in ordered:
                     doc_best.setdefault(block['document_id'], block)
@@ -286,6 +315,15 @@ class Retriever:
                 if block['block_id'] not in added:
                     priority.append(dict(block, selection_reason=reason))
                     added.add(block['block_id'])
+            for code in requested_codes:
+                exact_matches=[b for b in ordered if any(m['code']==code for m in b['structural_matches'])]
+                exact_matches.sort(key=lambda b:not any(m['code']==code and m['definition'] for m in b['structural_matches']))
+                # Preserve document/version ambiguity instead of silently choosing one edition.
+                seen_versions=set()
+                for block in exact_matches:
+                    if block['document_version_id'] not in seen_versions:
+                        reserve(block,'exact_code')
+                        seen_versions.add(block['document_version_id'])
             for block in ordered[:3]:
                 reserve(block, 'relevance')
             if normative:
@@ -308,19 +346,22 @@ class Retriever:
             for block in priority:
                 if len(block['text_exact']) > 6000:
                     lowered = block['text_exact'].lower().replace('ё', 'е')
-                    position = block.get('rerank_span', [min((lowered.find(t) for t in query_terms if t in lowered), default=0)])[0]
+                    position = min((m['start'] for m in block['structural_matches']),default=block.get('rerank_span', [min((lowered.find(t) for t in query_terms if t in lowered), default=0)])[0])
                     start = max(0, position - 1000)
                     end = min(len(block['text_exact']), start + 6000)
                     excerpt = block['text_exact'][start:end]
                     block = dict(block, text_exact=excerpt, text_normalized=excerpt.lower().replace('ё', 'е'),
-                                 excerpt_range=[start, end], full_block_truncated=True)
+                                 excerpt_range=[start, end], full_block_truncated=True, full_block_length=len(block['text_exact']))
                 cost = len(block['text_exact']) + 300
                 if len(selected) < (top_k or self.limit) and used + cost <= self.budget:
                     selected.append(block)
                     used += cost
             # Display selected evidence by relevance, retaining reservation reasons.
             if manifest['reranker']['status'] == 'applied':
-                selected.sort(key=lambda b: (-b['rerank_score'], -b['score'], b['block_id']))
+                selected.sort(key=lambda b: (b.get('selection_reason')!='exact_code', -b['rerank_score'], -b['score'], b['block_id']))
+            manifest['missing_exact_codes']=[code for code in requested_codes if not any(code in codes(b['text_exact']) for b in selected)]
+            if manifest['missing_exact_codes']:
+                manifest['limitations'].append('exact_code_not_found')
             manifest.update(retrieved_candidate_count=total_candidates, examined_candidate_count=len(selected),
                             unexamined_candidate_count=total_candidates - len(selected), context_characters=used,
                             selected_document_ids=list(dict.fromkeys(b['document_id'] for b in selected)))

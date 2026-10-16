@@ -14,9 +14,10 @@ import uuid
 
 
 class ProviderError(RuntimeError):
-    def __init__(self, message, status=None):
+    def __init__(self, message, status=None, code=None):
         super().__init__(message)
         self.status = status
+        self.code = code or ('http_'+str(status) if status else 'provider_error')
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -73,10 +74,14 @@ class GigaChat:
             raise ProviderError(f'GigaChat {stage}: HTTP {exc.code}{detail}; ' + reasons.get(exc.code, 'ошибка сервиса'), exc.code) from None
         except urllib.error.URLError as exc:
             cause = exc.reason
+            if isinstance(cause,TimeoutError):
+                raise ProviderError(f'GigaChat {stage}: время ожидания ответа истекло.',code='timeout') from None
             if isinstance(cause, ssl.SSLCertVerificationError):
                 raise ProviderError(f'GigaChat {stage}: сертификат TLS не подтверждён. Настройте gateway.ca_file.') from None
             raise ProviderError(f'GigaChat {stage}: ошибка сети ({type(cause).__name__}).') from None
         except (ssl.SSLError, OSError, TimeoutError) as exc:
+            if isinstance(exc,TimeoutError):
+                raise ProviderError(f'GigaChat {stage}: время ожидания ответа истекло.',code='timeout') from None
             raise ProviderError(f'GigaChat {stage}: ошибка сети/CA ({type(exc).__name__}).') from None
         except (ValueError, TypeError):
             raise ProviderError(f'GigaChat {stage}: некорректный JSON ответа.') from None
@@ -102,8 +107,9 @@ class GigaChat:
             self.cached = (fingerprint, token, expires)
             return token
 
-    def call(self, path, body=None):
-        for attempt in range(2):
+    def call(self, path, body=None, *, retry_unauthorized=None):
+        retry = self.cfg.get('retry_unauthorized', True) if retry_unauthorized is None else retry_unauthorized
+        for attempt in range(2 if retry else 1):
             token = self.token(refresh=bool(attempt))
             try:
                 return self.request(self.cfg['base_url'].rstrip('/') + path, {
@@ -111,7 +117,7 @@ class GigaChat:
                     'Accept': 'application/json', 'User-Agent': 'DocumentRAG-Local/1.0',
                 }, json.dumps(body, ensure_ascii=False).encode() if body is not None else None)
             except ProviderError as exc:
-                if exc.status != 401 or attempt:
+                if exc.status != 401 or attempt or not retry:
                     raise
 
     def models(self):

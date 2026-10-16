@@ -31,7 +31,10 @@ def pdf_layout(path):
                                 kind='footnote' if box[1]>height*.85 and value.lstrip()[:1] in '*¹²³' else 'paragraph'))
             offset += len(value)
             text += value
-        pages.append(dict(text_exact=text,regions=regions))
+        words=[dict(text=w.text or '',box=[float(w.attrib[k]) for k in ('xMin','yMin','xMax','yMax')])
+               for w in page.iter() if w.tag.rsplit('}',1)[-1]=='word']
+        from .tables import measure_tables
+        pages.append(dict(text_exact=text,regions=regions,words=words,tables=measure_tables(words)))
     return pages
 
 
@@ -42,9 +45,11 @@ def ocr_layout(path):
     with Image.open(path) as image:
         width,height = image.size
     groups = {}
+    raw_words=[]
     for row in csv.DictReader(io.StringIO(result.stdout.decode('utf-8')), delimiter='\t', quoting=csv.QUOTE_NONE):
         if row.get('level')!='5' or not row.get('text','').strip():
             continue
+        raw_words.append(dict(text=row['text'],box=[int(row['left']),int(row['top']),int(row['left'])+int(row['width']),int(row['top'])+int(row['height'])],confidence=float(row['conf'])))
         groups.setdefault((row['block_num'],row['par_num'],row['line_num']),[]).append(row)
     text, regions = '', []
     for words in groups.values():
@@ -54,7 +59,8 @@ def ocr_layout(path):
         regions.append(dict(start=len(text),end=len(text)+len(value),box=box,width=width,height=height,
                             confidence=min(float(w['conf']) for w in words),kind='paragraph'))
         text += value
-    return dict(text_exact=text,regions=regions)
+    from .tables import measure_tables
+    return dict(text_exact=text,regions=regions,words=raw_words,tables=measure_tables(raw_words))
 
 
 def span_boxes(page, start, end):

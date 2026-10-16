@@ -212,7 +212,7 @@ class ComplianceTests(unittest.TestCase):
         from document_rag.bank.generation import GigaChatRAG,expand_references
         source=dict(block_id='canonical',document_name='Норма',page_number='1',section_path='1',text_exact='Срок составляет 5 рабочих дней.')
         data={'claims':[{'text':source['text_exact'],'evidence':[{'quote_id':'Q1'}]}],'assessments':[],'limitations':[]}
-        provider=GigaChatRAG({'model':'test','reference_citations':True})
+        provider=GigaChatRAG({'answer_mode':'audit','model':'test','reference_citations':True})
         response=lambda data:{'model':'test','choices':[{'finish_reason':'stop','message':{'content':json.dumps(data)}}]}
         with patch.object(provider,'call',side_effect=[response(data),response({'judgments':[{'index':0,'supported':True}]})]) as call:
             result=provider.analyze('Срок?',[source])
@@ -224,12 +224,12 @@ class ComplianceTests(unittest.TestCase):
     def test_unapproved_model_and_token_quota_block_publication(self):
         from document_rag.bank.generation import GigaChatRAG
         source=dict(block_id='b',document_name='norm',page_number='1',section_path='1',text_exact='Срок составляет 5 рабочих дней.')
-        provider=GigaChatRAG({'model':'test','question_token_budget':1})
+        provider=GigaChatRAG({'answer_mode':'audit','model':'test','question_token_budget':1})
         with patch.object(provider,'call') as call:
             result=provider.analyze('Какой срок?',[source])
         self.assertFalse(result['claims'])
         self.assertFalse(call.called)
-        provider=GigaChatRAG({'model':'test','allowed_model_versions':['approved']})
+        provider=GigaChatRAG({'answer_mode':'audit','model':'test','allowed_model_versions':['approved']})
         response={'model':'changed','choices':[{'finish_reason':'stop','message':{'content':'{}'}}]}
         with patch.object(provider,'call',return_value=response):
             result=provider.analyze('Какой срок?',[source])
@@ -240,7 +240,7 @@ class ComplianceTests(unittest.TestCase):
         from document_rag.bank.generation import GigaChatRAG
         sources=[dict(block_id=str(i),document_name='norm',page_number='1',section_path='1',
                     text_exact=f'Срок составляет {i+5} рабочих дней. '+'Описание условий. '*140) for i in range(2)]
-        provider=GigaChatRAG({'model':'test','context_window_tokens':9000,'count_tokens':True})
+        provider=GigaChatRAG({'answer_mode':'audit','model':'test','context_window_tokens':9000,'count_tokens':True})
         stages=[]
         def reply(path,body):
             if path=='/tokens/count':return [{'tokens':100} for _ in body['input']]

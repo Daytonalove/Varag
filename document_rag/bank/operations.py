@@ -161,7 +161,7 @@ def retention(store,project,user,days=365,execute=False):
             versions=[r[0] for r in conn.execute('SELECT id FROM versions WHERE document_id=?',(document,))]
             for version in versions:
                 conn.execute('DELETE FROM block_vectors WHERE block_id IN(SELECT id FROM blocks WHERE version_id=?)',(version,))
-                for table in ('block_fts','claims','exact_terms','block_links','metadata_proposals','derived_versions','processing_progress','pages','blocks','jobs','maintenance_jobs','embedding_versions'):
+                for table in ('block_fts','claims','exact_terms','block_links','metadata_proposals','structural_keys','derived_versions','processing_progress','page_layouts','pages','blocks','jobs','maintenance_jobs','embedding_versions'):
                     conn.execute(f'DELETE FROM {table} WHERE version_id=?',(version,))
             conn.execute('DELETE FROM versions WHERE document_id=?',(document,))
             conn.execute('DELETE FROM document_acl WHERE document_id=?',(document,))

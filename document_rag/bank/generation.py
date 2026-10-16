@@ -182,7 +182,10 @@ class GigaChatRAG(GigaChatEvidence):
     def analyze(self, question, sources, *, as_of=None, history=None, before_call=lambda *args: None, record_call=lambda *args: None):
         """Fast RAG by default; set RAG_ANSWER_MODE=audit for the original analysis."""
         import os
-        if os.environ.get('RAG_ANSWER_MODE', 'fast').strip().lower() != 'audit':
+        answer_mode=self.cfg.get('answer_mode',os.environ.get('RAG_ANSWER_MODE','fast')).strip().lower()
+        if answer_mode not in ('fast','audit'):
+            raise ValueError('RAG_ANSWER_MODE должен быть fast или audit.')
+        if answer_mode == 'fast':
             from .fast_generation import analyze_fast
             return analyze_fast(self, question, sources, as_of=as_of, history=history,
                                 before_call=before_call, record_call=record_call)

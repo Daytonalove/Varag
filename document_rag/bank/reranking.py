@@ -73,14 +73,14 @@ class LocalCrossEncoder:
         import torch
         with self.lock:
             tokenizer = self.model.tokenizer
-            query_ids = tokenizer(question, add_special_tokens=False)['input_ids']
+            query_ids = tokenizer(question, add_special_tokens=False, verbose=False)['input_ids']
             qids = query_ids[:96]
             query = tokenizer.decode(qids, skip_special_tokens=True)
             width = self.max_length - len(qids) - tokenizer.num_special_tokens_to_add(pair=True) - 4
             pairs, owners, windows = [], [], []
             for index, text in enumerate(texts):
                 offsets = tokenizer(text, add_special_tokens=False, truncation=False,
-                                    return_offsets_mapping=True)['offset_mapping']
+                                    return_offsets_mapping=True, verbose=False)['offset_mapping']
                 starts = list(range(0, max(1, len(offsets) - width + 1), max(1, width - 64)))
                 tail = max(0, len(offsets) - width)
                 if starts[-1] != tail:

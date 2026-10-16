@@ -1,0 +1,119 @@
+{
+  "synthetic_only": true,
+  "independent_acceptance": false,
+  "cases": [
+    {
+      "question": "Найди КЗД.7 и ОПС.12",
+      "expected_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "found_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "seconds": 0.087,
+      "passed": true
+    },
+    {
+      "question": "Найди НКЛ.4",
+      "expected_codes": [
+        "НКЛ.4"
+      ],
+      "found_codes": [
+        "НКЛ.4"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "seconds": 0.037,
+      "passed": true
+    },
+    {
+      "question": "Найди КЗД.999",
+      "expected_codes": [],
+      "found_codes": [],
+      "retrieval_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "НКЛ.4",
+        "ОПС.12",
+        "ОПС.120"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "КЗД.70",
+        "ОПС.120"
+      ],
+      "seconds": 0.069,
+      "passed": true
+    },
+    {
+      "question": "ГОСТ 20210.1: КЗД.7",
+      "expected_codes": [
+        "КЗД.7"
+      ],
+      "found_codes": [
+        "КЗД.7"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "ОПС.12"
+      ],
+      "seconds": 0.014,
+      "passed": true
+    },
+    {
+      "question": "ГОСТ 20210.2: КЗД.7",
+      "expected_codes": [
+        "КЗД.7"
+      ],
+      "found_codes": [
+        "КЗД.7"
+      ],
+      "retrieval_codes": [
+        "КЗД.7",
+        "НКЛ.4"
+      ],
+      "sent_codes": [
+        "КЗД.7",
+        "НКЛ.4"
+      ],
+      "seconds": 0.013,
+      "passed": true
+    }
+  ],
+  "reranker_max_input_tokens": 381,
+  "reranker_input_limit": 384,
+  "encoder_max_input_tokens": 504,
+  "encoder_input_limit": 512,
+  "passed": true
+}

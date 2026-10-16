@@ -52,7 +52,7 @@ class GigaChatEvidence(GigaChat):
         self.rate_lock = threading.Lock()
         self.rate_state = {'next_call': 0}
 
-    def call(self,path,body=None):
+    def call(self,path,body=None,**kwargs):
         rate=float(self.cfg.get('requests_per_minute',0))
         if rate>0:
             with self.rate_lock:
@@ -60,7 +60,7 @@ class GigaChatEvidence(GigaChat):
                 if delay>0:
                     time.sleep(min(delay,60))
                 self.rate_state['next_call']=time.monotonic()+60/rate
-        return super().call(path,body)
+        return super().call(path,body,**kwargs)
 
     def credential(self):
         # Recommended new name; legacy env/file remains supported by the existing client.
@@ -121,6 +121,9 @@ def _search_query_with_history(question, history):
     if _RECHECK.search(question):
         # Concrete new topic in a correction is kept, but generic review
         # phrasing ('по существу не совсем корректно, проверь заново') isn't.
+        from .structural import codes, standards, query_pages
+        if codes(question) or standards(question) or query_pages(question):
+            return question[:2000]
         return topic[:2000]
     if _FOLLOWUP.search(question):
         return (question + '\n' + topic)[:2000]
@@ -184,7 +187,13 @@ class AnswerService:
         search_question = _search_query_with_history(question, history)
         retrieval = self.retriever.search(project, user, search_question, as_of=as_of)
         sources, manifest = retrieval['sources'], retrieval['coverage_manifest']
+        fast_mode=use_llm and hasattr(provider,'analyze') and provider.cfg.get('answer_mode',os.environ.get('RAG_ANSWER_MODE','fast')).strip().lower()=='fast'
+        failure=None
+        manifest['retrieved_source_ids']=[s['block_id'] for s in sources]
         discrepancies = ContradictionService().assess(sources, as_of) if retrieval['normative'] else []
+        if fast_mode:
+            manifest['preliminary_comparisons']=discrepancies
+            discrepancies=[]
         warnings = ['Охват поиска ограничен найденными фрагментами. Неустановленные ссылки и условия требуют проверки по оригиналу.',
                     'Отсутствие найденного расхождения не доказывает отсутствие противоречий.']
         if not self.store.claims_enabled:
@@ -268,17 +277,23 @@ class AnswerService:
             except ProviderError as exc:
                 evidence, llm_failed, mode = [], True, 'gigachat_failed'
                 warnings.append(str(exc))
-        if semantic is not None and semantic.get('verification_level') == 'source_ids_only':
+                failure={'code':exc.code,'message':str(exc),'http_status':exc.status}
+        if fast_mode and llm_failed:
+            sources=[]
+        if semantic is not None and semantic.get('verification_level') in ('source_ids_only','local_source_checks'):
             cited_ids = {item['block_id'] for claim in semantic['claims'] for item in claim['evidence']}
             for finding in discrepancies:
                 if finding.get('method') == 'deterministic' and finding.get('status') in (
                         'potential_unresolved_conflict', 'explained_by_amendment', 'needs_review'):
                     cited_ids.update(finding.get('source_block_ids', []))
             # This also repairs [n] reference numbering, calculated below.
-            sources = [item for item in sources if item['block_id'] in cited_ids]
+            sent={s['block_id']:s for s in semantic.get('sent_sources',sources)}
+            sources = [sent[item['block_id']] for item in sources if item['block_id'] in cited_ids and item['block_id'] in sent]
+            manifest['sent_source_ids']=list(sent)
+            manifest['verification_level']=semantic['verification_level']
         status = 'needs_review' if sources else 'insufficient_evidence'
         if semantic is not None:
-            status = ('needs_review' if semantic.get('verification_level') == 'source_ids_only'
+            status = ('needs_review' if semantic.get('verification_level') in ('source_ids_only','local_source_checks')
                       else 'citations_checked') if semantic['claims'] else 'insufficient_evidence'
             if any(s['quality_flags'] for s in sources):
                 status = 'needs_review'
@@ -293,7 +308,7 @@ class AnswerService:
         if status == 'potential_unresolved_conflict':
             text = 'Потенциальное противоречие не разрешено. Найдены разные значения; основание выбора одного из них не установлено.'
         if llm_failed:
-            text = 'Анализ GigaChat не завершён. Доступны найденные источники и предварительные локальные расхождения.'
+            text = ('Ответ не получен. '+failure['message']) if fast_mode and failure else 'Анализ GigaChat не завершён. Доступны найденные источники и предварительные локальные расхождения.'
         if not use_llm:
             warnings.insert(0, 'Локальный режим без LLM: поиск и предварительное сравнение, не смысловой ответ GigaChat.')
         if semantic is not None and semantic['claims']:
@@ -330,6 +345,9 @@ class AnswerService:
                       warnings=list(dict.fromkeys(warnings)), mode=mode, model_version=model, index_version=retrieval['index_version'], llm_call=metadata,
                       claims=semantic['claims'] if semantic else [], conversation_id=conversation_id, as_of=as_of,
                       search_question=search_question)
+        result['failure']=failure
+        if fast_mode and semantic:
+            result['answer_limitations']=[s for s in semantic['limitations'] if not s.startswith('Быстрый режим:')]
         with self.store.connect() as conn:
             conn.execute('BEGIN IMMEDIATE')
             self.store.project_access(conn, project, user)

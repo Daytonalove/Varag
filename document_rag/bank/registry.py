@@ -3,6 +3,7 @@ from datetime import date
 import json
 import re
 from .norms import periods, facts, DATE, iso_date, VERSION
+from .structural import rows as structural_rows, indexed_version
 
 TEXT_FIELDS = {'title','document_type','document_number','revision','approving_body','department','language','upload_source','product','status'}
 DATE_FIELDS = {'approved_at','effective_from','effective_until'}
@@ -49,9 +50,11 @@ def rebuild_derived(conn, version, *, claims=False):
     blocks = [dict(b) for b in conn.execute('SELECT * FROM blocks WHERE version_id=? ORDER BY ordinal', (version,))]
     conn.execute('DELETE FROM block_fts WHERE version_id=?', (version,))
     conn.executemany('INSERT INTO block_fts VALUES(?,?,?)', [(b['id'],version,b['text_normalized']) for b in blocks])
-    for table in ('exact_terms','claims','block_links'):
+    for table in ('exact_terms','claims','block_links','structural_keys'):
         conn.execute(f'DELETE FROM {table} WHERE version_id=?', (version,))
     for i,b in enumerate(blocks):
+        conn.executemany('INSERT INTO structural_keys VALUES(?,?,?,?,?,?,?,?)',
+            [(version,b['id'],r['key'],b['page_index'],r['start'],r['span_end'],int(r['definition']),r['raw']) for r in structural_rows(b['text_exact'])])
         extracted = facts(b['text_exact'])
         terms = [(f['kind'],f['value'],f['unit']) for f in extracted]
         for raw in DATE.findall(b['text_exact']):
@@ -78,7 +81,7 @@ def rebuild_derived(conn, version, *, claims=False):
     if number:
         proposal['document_number']=number[1]
     conn.execute('INSERT OR REPLACE INTO metadata_proposals VALUES(?,?,?)', (version,json.dumps(proposal,ensure_ascii=False),VERSION))
-    conn.execute('INSERT OR REPLACE INTO derived_versions VALUES(?,?,?)',(version,VERSION,int(claims)))
+    conn.execute('INSERT OR REPLACE INTO derived_versions VALUES(?,?,?)',(version,indexed_version(VERSION),int(claims)))
 
 
 def create_relation(store, user, payload):

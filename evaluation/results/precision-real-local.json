@@ -1,0 +1,191 @@
+{
+  "external_calls": 0,
+  "original_database_modified": false,
+  "gold_origin": "user-reported cases; local verification, not independent bank acceptance",
+  "cases": [
+    {
+      "query": "Найди СМЭ.3",
+      "expected_pages": {
+        "СМЭ.3": 24
+      },
+      "before": {
+        "selected_hits": {
+          "СМЭ.3": [
+            24
+          ]
+        },
+        "sent_hits": {
+          "СМЭ.3": [
+            24
+          ]
+        },
+        "seconds": 1.793,
+        "reranker": "applied"
+      },
+      "after": {
+        "selected_hits": {
+          "СМЭ.3": [
+            24
+          ]
+        },
+        "sent_hits": {
+          "СМЭ.3": [
+            24
+          ]
+        },
+        "seconds": 1.603,
+        "reranker": "applied",
+        "canonical_claims": 1,
+        "passed": true
+      }
+    },
+    {
+      "query": "Найди ЗСВ.5",
+      "expected_pages": {
+        "ЗСВ.5": 43
+      },
+      "before": {
+        "selected_hits": {
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "sent_hits": {
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "seconds": 1.695,
+        "reranker": "applied"
+      },
+      "after": {
+        "selected_hits": {
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "sent_hits": {
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "seconds": 1.68,
+        "reranker": "applied",
+        "canonical_claims": 1,
+        "passed": true
+      }
+    },
+    {
+      "query": "Найди УЗП.21",
+      "expected_pages": {
+        "УЗП.21": 17
+      },
+      "before": {
+        "selected_hits": {
+          "УЗП.21": [
+            17
+          ]
+        },
+        "sent_hits": {
+          "УЗП.21": [
+            17
+          ]
+        },
+        "seconds": 1.676,
+        "reranker": "applied"
+      },
+      "after": {
+        "selected_hits": {
+          "УЗП.21": [
+            17
+          ]
+        },
+        "sent_hits": {
+          "УЗП.21": [
+            17
+          ]
+        },
+        "seconds": 1.692,
+        "reranker": "applied",
+        "canonical_claims": 1,
+        "passed": true
+      }
+    },
+    {
+      "query": "Найди СМЭ.3 и ЗСВ.5",
+      "expected_pages": {
+        "СМЭ.3": 24,
+        "ЗСВ.5": 43
+      },
+      "before": {
+        "selected_hits": {
+          "СМЭ.3": [
+            24
+          ],
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "sent_hits": {
+          "СМЭ.3": [
+            24
+          ],
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "seconds": 1.682,
+        "reranker": "applied"
+      },
+      "after": {
+        "selected_hits": {
+          "СМЭ.3": [
+            24
+          ],
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "sent_hits": {
+          "СМЭ.3": [
+            24
+          ],
+          "ЗСВ.5": [
+            43
+          ]
+        },
+        "seconds": 1.678,
+        "reranker": "applied",
+        "canonical_claims": 2,
+        "passed": true
+      }
+    },
+    {
+      "query": "Найди СМЭ.999",
+      "expected_pages": {},
+      "before": {
+        "selected_hits": {
+          "СМЭ.999": []
+        },
+        "sent_hits": {
+          "СМЭ.999": []
+        },
+        "seconds": 1.718,
+        "reranker": "applied"
+      },
+      "after": {
+        "selected_hits": {
+          "СМЭ.999": []
+        },
+        "sent_hits": {
+          "СМЭ.999": []
+        },
+        "seconds": 1.705,
+        "reranker": "applied",
+        "canonical_claims": 0,
+        "passed": true
+      }
+    }
+  ],
+  "passed": true
+}
