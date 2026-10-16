@@ -19,6 +19,39 @@ import urllib.request
 from document_rag.config import ROOT, audit, load, local_token
 
 
+def bank_settings():
+    path = ROOT / 'config.json'
+    return json.loads(path.read_text()).get('bank', {}) if path.exists() else {}
+
+
+def bank_database():
+    value = os.environ.get('BANK_DATABASE') or bank_settings().get('database') or 'data/bank/audit.sqlite3'
+    return str((ROOT / Path(value).expanduser()).resolve())
+
+
+def forward_bank_workspace():
+    """A local checkout can delegate bank commands to one canonical workspace."""
+    if len(sys.argv) < 2 or sys.argv[1] not in ('bank', 'bank-backup', 'bank-restore'):
+        return
+    target = bank_settings().get('workspace')
+    if not target:
+        return
+    target = (ROOT / Path(target).expanduser()).resolve()
+    if target == ROOT.resolve():
+        return
+    config = target / 'config.json'
+    destination = json.loads(config.read_text()).get('bank', {}) if config.exists() else {}
+    if destination.get('workspace') and (target / destination['workspace']).resolve() != target:
+        raise ValueError('Цепочка перенаправлений рабочих папок запрещена.')
+    python = target / '.venv/bin/python'
+    entry = target / 'manage.py'
+    if not python.is_file() or not entry.is_file():
+        raise ValueError('Основная рабочая папка Варяга недоступна: ' + str(target))
+    print('Основной проект Варяга: ' + str(target), flush=True)
+    os.chdir(target)
+    os.execv(str(python), [str(python), str(entry), *sys.argv[1:]])
+
+
 def configure():
     path = Path(os.environ.get('RAG_CONFIG', ROOT / 'config.json')).resolve()
     if not path.exists():
@@ -151,6 +184,7 @@ def run_servers(cfg, api_port, ui_port, bank=False):
 
 
 def main():
+    forward_bank_workspace()
     parser = argparse.ArgumentParser(description='Локальный RAG: Flask + Streamlit + GigaChat')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('configure')
@@ -173,12 +207,12 @@ def main():
     if args.command == 'configure':
         configure(); return
     if args.command == 'bank':
-        database = str(Path(os.environ.get('BANK_DATABASE', ROOT / 'data/bank/audit.sqlite3')).resolve())
+        database = bank_database()
         run_servers({'storage': {'database': database}}, args.api_port, args.ui_port, bank=True)
         return
     if args.command == 'bank-backup':
         from document_rag.bank.store import Store
-        store=Store(os.environ.get('BANK_DATABASE', str(ROOT / 'data/bank/audit.sqlite3')))
+        store=Store(bank_database())
         if args.key_file:
             from document_rag.bank.operations import encrypted_backup
             encrypted_backup(store,args.path,args.key_file)
