@@ -114,3 +114,13 @@ class ChatTests(unittest.TestCase):
         self.assertIsNone(answer['model_version'])
         for evidence in answer['evidence']:
             self.assertTrue(any(evidence['quote'] in s['text_exact'] for s in answer['sources']))
+
+    def test_numbered_markdown_items_are_not_mistaken_for_document_facts(self):
+        from document_rag.bank.fast_generation import _guard_claims, _parse_answer
+        sources = [{'block_id': 'b', 'text_exact': 'Состав мер приведен в таблице 42.', 'section_path': ''}]
+        claims, _ = _parse_answer('2. Меры приведены в таблице 42. [Q1]', sources)
+        checked, notes = _guard_claims(claims, sources, 'Есть ли в документе таблица?')
+        self.assertEqual(len(checked), 1)
+        self.assertEqual(notes, [])
+        bad, _ = _parse_answer('2. Меры приведены в таблице 99. [Q1]', sources)
+        self.assertEqual(_guard_claims(bad, sources, 'Есть ли в документе таблица?')[0], [])

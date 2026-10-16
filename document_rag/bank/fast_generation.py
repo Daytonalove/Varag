@@ -192,7 +192,7 @@ def _parse_answer(raw, sources, allow_general=False):
         if any(i not in registry for i in ids):
             limitations.append('Фрагмент ответа с неизвестной ссылкой исключён.')
             continue
-        text = re.sub(r'\[Q\d+\]', '', paragraph).strip()
+        text = re.sub(r'\[Q\d+\](?:\s*,\s*(?=\[Q\d+\]))?', '', paragraph).strip()
         if not text:
             continue
         if not ids and not allow_general:
@@ -256,7 +256,8 @@ def _guard_claims(claims, sources, question):
         # independently valid claims and never triggers another completion.
         from .generation import validate_analysis
         try:
-            validate_analysis(json.dumps({'claims':[claim],'assessments':[],'limitations':[]},ensure_ascii=False),sources)
+            validation_claim = dict(claim, text=re.sub(r'(?m)^\s*\d+[.)]\s+(?=\D)', '', claim['text']))
+            validate_analysis(json.dumps({'claims':[validation_claim],'assessments':[],'limitations':[]},ensure_ascii=False),sources)
         except ValueError:
             limitations.append('Неподтверждённое утверждение исключено локальной проверкой источников и чисел.')
             continue
