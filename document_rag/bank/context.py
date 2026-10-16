@@ -100,9 +100,10 @@ def pack_context(provider, body, payload, chosen, schema, policy, *, before_call
         chosen.append(source)
         payload['sources'].append(dict(item, source_id='Q'+str(len(chosen))))
         total += cost + 32
-    if not chosen:
+    if not chosen and snapshots:
         raise ProviderError('Нужный контекст не помещается в окно выбранной модели. Уточните вопрос или выберите модель с большим контекстом.', 422, 'context_budget')
-    body['response_format']['schema'] = schema([s['source_id'] for s in payload['sources']])
+    if body.get('response_format', {}).get('type') == 'json_schema':
+        body['response_format']['schema'] = schema([s['source_id'] for s in payload['sources']])
     body['messages'][1]['content'] = dumps(payload)
     estimate = math.ceil(total * 1.02) + reserve
     if method == 'utf8_upper_bound':
@@ -110,7 +111,8 @@ def pack_context(provider, body, payload, chosen, schema, policy, *, before_call
         estimate = len(dumps(body).encode('utf-8')) + reserve
         while estimate > ceiling and len(chosen) > 1:
             chosen.pop(); payload['sources'].pop()
-            body['response_format']['schema'] = schema([s['source_id'] for s in payload['sources']])
+            if body.get('response_format', {}).get('type') == 'json_schema':
+                body['response_format']['schema'] = schema([s['source_id'] for s in payload['sources']])
             body['messages'][1]['content'] = dumps(payload)
             estimate = len(dumps(body).encode('utf-8')) + reserve
         if estimate > ceiling:

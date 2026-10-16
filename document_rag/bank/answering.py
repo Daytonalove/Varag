@@ -178,7 +178,7 @@ class AnswerService:
                 except Exception:
                     continue
                 if previous.get('conversation_id') == conversation_id:
-                    history.append({'question': previous['question'], 'answer_text': previous.get('answer_text', ''), 'document_ids': previous['coverage_manifest']['accessible_document_ids']})
+                    history.append({'question': previous['question'], 'answer_text': '' if previous.get('mode') == 'gigachat_failed' else previous.get('answer_text', ''), 'document_ids': previous['coverage_manifest']['accessible_document_ids']})
                 if len(history) == 3:
                     break
             history.reverse()
@@ -251,7 +251,7 @@ class AnswerService:
                 raise ValueError('Внешний анализ отключён: нужны EXTERNAL_LLM_APPROVED=true и настройки GigaChat.')
             check_policy(sources, history)
             try:
-                if sources and hasattr(provider, 'analyze'):
+                if (sources or fast_mode) and hasattr(provider, 'analyze'):
                     semantic = provider.analyze(question, sources, as_of=as_of, history=history,
                                                      before_call=check_policy, record_call=record_call)
                     model = semantic['model']
@@ -288,6 +288,13 @@ class AnswerService:
                 evidence, llm_failed, mode = [], True, 'gigachat_failed'
                 warnings.append(str(exc))
                 failure={'code':exc.code,'message':str(exc),'http_status':exc.status}
+                from .fast_generation import is_summary, local_summary
+                if fast_mode and exc.code == 'finish_blacklist' and is_summary(search_question) and sources:
+                    semantic = local_summary(sources)
+                    evidence = [e for c in semantic['claims'] for e in c['evidence']]
+                    llm_failed, mode = False, 'local_summary'
+                    manifest['limitations'].append('provider_refused_summary')
+        retrieved_sources = list(sources) if fast_mode and llm_failed else []
         if fast_mode and llm_failed:
             sources=[]
         if semantic is not None and semantic.get('verification_level') in ('source_ids_only','local_source_checks'):
@@ -352,12 +359,18 @@ class AnswerService:
                 status = 'potential_unresolved_conflict'
                 if not text.startswith('Потенциальное противоречие'):
                     text = 'Потенциальное противоречие не разрешено.\n\n' + text
+        if mode == 'local_summary':
+            text = 'GigaChat отказал в генерации резюме. Ниже — локальная подборка выдержек из документа.\n\n' + text
         result = dict(id=answer_id, answer_text=text, verification_status=status, coverage_status=manifest['coverage_status'],
                       coverage_manifest=manifest, sources=sources, evidence=evidence, discrepancies=discrepancies,
                       warnings=list(dict.fromkeys(warnings)), mode=mode, model_version=model, index_version=retrieval['index_version'], llm_call=metadata,
                       claims=semantic['claims'] if semantic else [], conversation_id=conversation_id, as_of=as_of,
                       search_question=search_question)
         result['failure']=failure
+        result['retrieved_sources']=retrieved_sources
+        if semantic and semantic['claims'] and all(not c['evidence'] for c in semantic['claims']):
+            result['mode']='gigachat_general'
+            result['verification_status']='general_knowledge'
         if fast_mode and semantic:
             result['answer_limitations']=[s for s in semantic['limitations'] if not s.startswith('Быстрый режим:')]
         with self.store.connect() as conn:

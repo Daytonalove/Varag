@@ -52,6 +52,8 @@ class Retriever:
         return result
 
     def _search(self, project, user, question, document_ids, top_k, as_of, filters):
+        from .fast_generation import is_summary
+        summary = is_summary(question)
         with self.store.connect() as conn:
             conn.execute('BEGIN')  # Consistent corpus + ACL snapshot for the whole search.
             docs = self.store.documents(project, user, conn)
@@ -136,6 +138,9 @@ class Retriever:
                 page_layouts={r['page_index']:json.loads(r['data']) for r in conn.execute('SELECT * FROM page_layouts WHERE version_id=?',(doc['active_version_id'],))}
                 reasons = defaultdict(set)
                 code_spans = defaultdict(list)
+                if summary:
+                    for block in rows:
+                        reasons[block['id']].add('summary_coverage')
                 for code in requested_codes:
                     for hit in conn.execute('SELECT * FROM structural_keys WHERE version_id=? AND code=? ORDER BY definition DESC,start', (doc['active_version_id'],code)):
                         if hit['block_id'] in by_id:
@@ -258,7 +263,7 @@ class Retriever:
             manifest['retrieval_passes'].append('rrf_fusion')
             total_candidates = len(ordered)
             manifest['reranker'] = dict(status='disabled', model_id=None, candidates=0)
-            if self.reranker and ordered:
+            if self.reranker and ordered and not summary:
                 # Each independent route receives candidates before the shared cap.
                 lanes = [[b for b in ordered if reason in b['reasons']] for reason in
                          ('exact_code', 'exact_page', 'semantic', 'lexical', 'numeric', 'exact_index', 'document_relation', 'claims_index', 'alternatives', 'exceptions', 'amendments', 'cross_reference')]
@@ -315,6 +320,22 @@ class Retriever:
                 if block['block_id'] not in added:
                     priority.append(dict(block, selection_reason=reason))
                     added.add(block['block_id'])
+            if summary:
+                # Sample across the whole active version, not only passages matching 'summary'.
+                from itertools import zip_longest
+                versions = list(dict.fromkeys(b['document_version_id'] for b in ordered))
+                count = max(1, min(max(24, len(versions)), top_k or self.limit) // max(1, len(versions)))
+                lanes = []
+                for version in versions:
+                    blocks = sorted([b for b in ordered if b['document_version_id'] == version], key=lambda b: b['ordinal'])
+                    indexes = sorted({round(i * (len(blocks)-1) / max(1, count-1)) for i in range(min(count, len(blocks)))}) if len(blocks) > count else range(len(blocks))
+                    lanes.append([blocks[i] for i in indexes])
+                for group in zip_longest(*lanes):
+                    for block in group:
+                        if block is not None:
+                            reserve(block, 'summary_coverage')
+                manifest['retrieval_passes'].append('summary_coverage')
+                manifest['limitations'].append('summary_sampled_context')
             for code in requested_codes:
                 exact_matches=[b for b in ordered if any(m['code']==code for m in b['structural_matches'])]
                 exact_matches.sort(key=lambda b:not any(m['code']==code and m['definition'] for m in b['structural_matches']))

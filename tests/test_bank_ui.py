@@ -87,7 +87,7 @@ class BankUITests(unittest.TestCase):
             next(b for b in ui.button if b.label=='Открыть документ').click().run()
             self.assertEqual(len(ui.exception),0)
             next(b for b in ui.button if b.label=='＋ Новый чат').click().run()
-            self.assertTrue(ui.chat_input[0].disabled)
+            self.assertFalse(ui.chat_input[0].disabled)
             self.assertFalse(any('финансовым состоянием' in t.value for t in ui.text))
             self.assertEqual(len(ui.exception),0)
             next(b for b in ui.button if b.label=='Что такое мониторинг заёмщика?').click().run()

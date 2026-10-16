@@ -45,13 +45,17 @@ def show_answer(answer):
         st.error((answer.get('failure') or {}).get('message') or answer['answer_text'])
     else:
         st.markdown(answer['answer_text'])
+        if answer.get('failure'):
+            st.warning(answer['failure']['message'])
     for limitation in answer.get('answer_limitations',[]) if answer.get('claims') else []:
         st.warning(limitation)
     if 'llm_analysis_incomplete' in answer.get('coverage_manifest',{}).get('limitations',[]):
         st.warning('Часть найденных фрагментов не удалось проверить. Ответ может быть неполным.')
-    if answer.get('sources'):
-        with st.expander('Источники'):
-            for index, source in enumerate(answer['sources'], 1):
+    display_sources = answer.get('sources') or answer.get('retrieved_sources', [])
+    if display_sources:
+        label = 'Найденные фрагменты — ответ модели не получен' if answer.get('mode') == 'gigachat_failed' else 'Источники'
+        with st.expander(label):
+            for index, source in enumerate(display_sources, 1):
                 st.markdown(f"**[{index}] {source['document_name']} · стр. {source['page_number']}**")
                 st.text(source['text_exact'])
                 if st.button('Открыть документ', key='source_'+answer['id']+source['block_id']):
@@ -206,8 +210,8 @@ try:
         messages(project, conversation)
     ready = any(d['status'] in ('ready', 'ready_with_warnings') for d in docs)
     busy = any(d['status'] not in ('ready', 'ready_with_warnings', 'failed') for d in docs)
-    question = st.chat_input('Задайте вопрос по документам' if ready else 'Загрузите и обработайте документы',
-                             disabled=not ready or busy or not model or not health.get('gigachat_configured'), max_chars=2000)
+    question = st.chat_input('Задайте вопрос или попросите краткое содержание',
+                             disabled=busy or not model or not health.get('gigachat_configured'), max_chars=2000)
     if question:
         send_question(project, conversation, question, model)
         st.rerun()
